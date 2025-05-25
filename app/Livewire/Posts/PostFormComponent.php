@@ -78,12 +78,15 @@ final class PostFormComponent extends Component
 
         $post = $this->postService->store($dto);
 
+        // TODO: Needs to preview first instead of just saving
         if ($post) {
             $this->logInfo('Post created');
 
             session()->flash('message', 'Post created');
 
-            $this->redirect(route('posts.show', $post));
+            $slug = $post->slug;
+
+            $this->redirect(route('metafilter.posts.show', ['post' => $post, 'slug' => $post->slug]));
         } else {
             $this->logError('Post creation failed');
 
