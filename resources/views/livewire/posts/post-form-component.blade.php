@@ -34,7 +34,3 @@
         {{ trans('Preview') }}
     </button>
 </form>
-
-@push('scripts')
-    @include('livewire.posts.partials.wysiwyg-scripts')
-@endpush
