@@ -22,7 +22,7 @@ final class CommentForm extends Form
     public function setComment(Comment $comment): void
     {
         $this->comment = $comment;
-        $this->text = $comment->text;
+        $this->body = $comment->body;
     }
 
     public function store(CommentService $commentService): void
@@ -31,7 +31,7 @@ final class CommentForm extends Form
             $this->validate();
 
             $dto = new CommentDto(
-                text: $this->text,
+                body: $this->body,
                 post_id: $this->postId,
                 user_id: auth()->id(),
                 parent_id: null,

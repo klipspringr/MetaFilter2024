@@ -62,7 +62,7 @@ final class Comment extends BaseModel
     {
         return array_merge($this->toArray(), [
             'id' => (string) $this->id,
-            'text' => $this->text,
+            'body' => $this->body,
             'created_at' => $this->created_at->timestamp,
         ]);
     }
@@ -77,7 +77,7 @@ final class Comment extends BaseModel
     public function scopeSearch(Builder $query, string $keyword): Builder
     {
         return $query->whereFullText(
-            ['text'],
+            ['body'],
             "$keyword*",
             ['mode' => 'boolean'],
         );

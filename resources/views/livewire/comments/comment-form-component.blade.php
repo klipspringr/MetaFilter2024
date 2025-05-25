@@ -12,11 +12,11 @@
 
     <fieldset>
         <div wire:ignore>
-            <label for="text" class="sr-only">
+            <label for="body" class="sr-only">
                 {{ trans('Comment') }}
             </label>
 
-            <textarea wire:model="text" name="text" id="text"></textarea>
+            <textarea wire:model="body" name="body" id="body"></textarea>
 
             <div class="level">
                 @if($isEditing === true || $isReplying === true)

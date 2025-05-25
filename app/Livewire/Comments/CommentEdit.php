@@ -20,7 +20,7 @@ final class CommentEdit extends Component
 
     public function setComment(Comment $comment): void
     {
-        $this->form->text = $comment->text;
+        $this->form->body = $comment->body;
         $this->form->postId = $comment->post_id;
         $this->form->parentId = $comment->parent_id;
     }

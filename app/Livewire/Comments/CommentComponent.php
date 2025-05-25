@@ -21,7 +21,7 @@ final class CommentComponent extends Component
 
     // Data
     public ?int $authorizedUserId;
-    public string $text = '';
+    public string $body = '';
     public ?int $parentId = null;
     public int $flagCount = 0;
     public string $flagIconFilename = 'flag';
@@ -48,9 +48,9 @@ final class CommentComponent extends Component
 
         $this->post = $post;
 
-        $this->text = $comment->text;
+        $this->body = $comment->body;
 
-        $this->wordCount = str_word_count($comment->text);
+        $this->wordCount = str_word_count($comment->body);
 
         $this->user = auth()->user() ?? null;
 

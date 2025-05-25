@@ -16,12 +16,12 @@ final class EditCommentComponent extends Component
 
     public Comment $comment;
     public int $authorizedUserId;
-    public string $commentText;
+    public string $commentBody;
     public bool $isEditing = false;
     protected CommentRepository $commentRepository;
 
     protected array $rules = [
-        'commentText' => [
+        'commentBody' => [
             'required',
             'string',
         ],
@@ -32,7 +32,7 @@ final class EditCommentComponent extends Component
         $this->authorizedUserId = $this->getAuthorizedUserId();
 
         $this->comment = $comment;
-        $this->commentText = $comment->text;
+        $this->commentBody = $comment->body;
 
         $this->commentRepository = $commentRepository;
     }
@@ -60,7 +60,7 @@ final class EditCommentComponent extends Component
         $this->validate();
 
         $this->comment->update([
-            'text' => $this->commentText,
+            'body' => $this->commentBody,
         ]);
 
         $this->isEditing = false;

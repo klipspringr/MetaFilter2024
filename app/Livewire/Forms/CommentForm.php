@@ -29,7 +29,7 @@ final class CommentForm extends Form
 
     public function setComment(Comment $comment): void
     {
-        $this->text = $comment->text;
+        $this->body = $comment->body;
         $this->postId = $comment->post_id;
         $this->parentId = $comment->parent_id;
     }
@@ -44,13 +44,13 @@ final class CommentForm extends Form
         $this->validate();
 
         Comment::create([
-            'text' => $this->text,
+            'body' => $this->body,
             'post_id' => $this->postId,
             'parent_id' => $this->parentId,
             'user_id' => $this->authorizedUserId,
         ]);
 
-        $this->text = '';
+        $this->body = '';
 
         $this->flashMessage(LivewireEventEnum::CommentStored->value);
     }
@@ -64,7 +64,7 @@ final class CommentForm extends Form
         $this->validate();
 
         $this->comment->update([
-            'text' => $this->text,
+            'body' => $this->body,
         ]);
 
         $this->parent->isEditing = false;
