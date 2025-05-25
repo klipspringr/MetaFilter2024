@@ -15,11 +15,11 @@
     </div>
 
     <div wire:ignore>
-        <x-forms.textarea
-            name="more_inside"
-            label="{{ trans('More Inside') }}" />
+        <livewire:wysiwyg.wysiwyg-component
+            editor-id="more_inside"
+            label="{{ trans('More Inside') }}"
+        />
     </div>
-
     <x-forms.input
         name="tags"
         type="text"

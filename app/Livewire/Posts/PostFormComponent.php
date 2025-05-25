@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Livewire\Posts;
 
 use App\Dtos\PostDto;
+use App\Enums\LivewireEventEnum;
 use App\Enums\PostStateEnum;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Services\PostService;
 use App\Traits\LoggingTrait;
 use App\Traits\SubsiteTrait;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 final class PostFormComponent extends Component
@@ -45,6 +47,17 @@ final class PostFormComponent extends Component
     public function render(): View
     {
         return view('livewire.posts.post-form-component');
+    }
+
+    #[On(LivewireEventEnum::EditorUpdated->value)]
+    public function saveEditorContent($editorId, $content): void
+    {
+        if ($editorId == "post-body") {
+            $this->body = $content;
+        }
+        if ($editorId == "more_inside") {
+            $this->more_inside = $content;
+        }
     }
 
     public function store(): void
