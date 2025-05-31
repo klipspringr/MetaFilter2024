@@ -1,5 +1,5 @@
     <form>
-        <textarea wire:model="replyText" placeholder="{{ trans('Write your reply') }}&hellip;">
+        <textarea wire:model="replyText" placeholder="{{ trans('Write your reply') }}&hellip;" class="comment-textarea">
 
         </textarea>
 

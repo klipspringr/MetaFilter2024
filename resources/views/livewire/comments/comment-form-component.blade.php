@@ -16,7 +16,7 @@
                 {{ trans('Comment') }}
             </label>
 
-            <textarea wire:model="text" name="text" id="text"></textarea>
+            <textarea wire:model="text" name="text" id="text" class="comment-textarea"></textarea>
 
             <div class="level">
                 @if($isEditing === true || $isReplying === true)
