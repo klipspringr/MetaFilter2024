@@ -79,7 +79,7 @@ final class SignupWizardComponent extends BaseWizardComponent
     // Step 3
     public function submitEmailAddress(): void
     {
-        $this->email = strtolower($this->email);
+        $this->email = mb_strtolower($this->email);
         $rules = (new StoreEmailAddressRequest())->rules();
         \Log::debug('Email: ' . $this->email);
 
