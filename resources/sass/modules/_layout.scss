@@ -69,23 +69,38 @@ body {
 }
 
 .main-sidebar {
-    position: sticky;
-    top: 0;
-    margin: 0 0 3rem 0;
-    padding: 0.625rem 1.25rem 0.625rem 0.625rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     border: none;
     border-radius: 0;
     position: relative;
 }
 
-.main-sidebar section {
-    margin: 0 0 1rem 0;
-}
-
 .main-sidebar details {
     position: relative;
-    padding: 3rem 1.5rem 1rem 1.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 0.33rem;
 }
+
+.main-sidebar details> :not(summary) {
+    padding-inline: 1.5rem;
+}
+
+.main-sidebar details:first-child {
+    border-top-left-radius: 0.33rem;
+    border-top-right-radius: 0.33rem;
+}
+
+.main-sidebar details:last-child {
+    padding-bottom: 1rem;
+    border-bottom-left-radius: 0.33rem;
+    border-bottom-right-radius: 0.33rem;
+}
+
 /*
 // TODO: Figure out minimizing when closed
 .main-sidebar details[open] {
@@ -94,10 +109,7 @@ body {
 */
 
 .main-sidebar summary {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+    align-items: center;
     padding: 0.5rem;
     border-top-left-radius: 0.33rem;
     border-top-right-radius: 0.33rem;
@@ -133,7 +145,7 @@ body {
     position: relative;
 }
 
-.site-banner > button {
+.site-banner>button {
     position: absolute;
     top: 0;
     right: 0;
@@ -172,9 +184,13 @@ body {
         gap: 4rem;
     }
 
-    .global-navigation .container > ul,
-    .main-contents {
+    .global-navigation .container>ul {
         width: 75%;
+    }
+
+    .main-contents {
+        flex: 1 1 75%;
+        min-width: 25%;
     }
 
     .minimal .main-contents {
@@ -186,9 +202,12 @@ body {
         padding: 1rem 0 0 0;
     }
 
-    .global-navigation .container > search,
-    .main-sidebar {
+    .global-navigation .container>search {
         width: 25%;
+    }
+
+    .main-sidebar {
+        flex: 0 0 25%;
     }
 
     .global-header {

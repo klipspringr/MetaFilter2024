@@ -9,5 +9,5 @@
         </ul>
     </nav>
 
-    {{ trans('years ago') }}
+    <div class="sidebar-section-content">{{ trans('years ago') }}</div>
 </x-layout.sidebar-section-component>

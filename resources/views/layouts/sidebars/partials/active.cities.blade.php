@@ -2,5 +2,5 @@
     <x-slot name="heading">
         Active Cities
     </x-slot>
-    Active cities
+    <div class="sidebar-section-content">Active cities</div>
 </x-layout.sidebar-section-component>
