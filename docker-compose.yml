@@ -90,12 +90,16 @@ services:
     image: node:current-alpine
     volumes:
       - .:/MetaFilter2024
+      - node-modules:/MetaFilter2024/node_modules
     ports:
       - "3000:3000"
       - "3001:3001"
       - "5173:5173"
     working_dir: /MetaFilter2024
     entrypoint: [ 'npm' ]
+    environment:
+      - APP_HOST
+      - VITE_HOST=0.0.0.0
     profiles:
       - tools
     networks:
@@ -113,6 +117,8 @@ services:
       - DB_DATABASE
       - DB_USERNAME
       - DB_PASSWORD
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
     ports:
       - "8000:8000"
     volumes:
@@ -124,3 +130,6 @@ services:
       - tools
     networks:
       - metafilter
+
+volumes:
+  node-modules:

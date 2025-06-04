@@ -3,6 +3,25 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { resolve } from 'path';
 
+// Get host from command line or use default
+const appHost = process.env.APP_HOST || 'metafilter.test';
+const subdomains = [
+    'www', 
+    'ask', 
+    'metatalk', 
+    'fanfare', 
+    'projects', 
+    'music', 
+    'jobs', 
+    'irl'
+];
+
+// Create allowed hosts list with both bare domain and subdomains
+const allowedHosts = [appHost, ...subdomains.map(sub => `${sub}.${appHost}`)];
+
+// Serve on localhost by default
+const serverHost = process.env.VITE_HOST || 'localhost';
+
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
     css: {
@@ -11,6 +30,14 @@ export default defineConfig({
                 api: 'modern-compiler'
             }
         }
+    },
+    server: {
+        host: serverHost,
+        allowedHosts,
+        hmr: { host: serverHost },
+        cors: true,
+        strictPort: true,
+        port: 5173,
     },
     plugins: [
         laravel({
@@ -33,11 +60,14 @@ export default defineConfig({
             ],
             refresh: [
                 'app/Livewire/**',
+                'resources/views/**',
             ],
             publicDirectory: 'public_html',
             build: {
                 outDir: 'public_html/build',
             },
+            // Use specific host configuration
+            host: appHost,
         })
     ],
     resolve: {

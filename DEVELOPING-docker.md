@@ -52,14 +52,6 @@ docker compose run --rm artisan migrate
 docker compose run --rm artisan db:seed
 ```
 
-## Run development server
-
-Additional options are required to get the right behavior for `php artisan serve`:
-
-```
-docker compose run --rm --service-ports artisan serve --host=0.0.0.0
-```
-
 ## Configure test host names
 
 The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` will not show the site. Add the following to `/etc/hosts` so you can browse instead to `http://www.metafilter.test/` and see the right routes:
@@ -76,3 +68,11 @@ The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` 
 127.0.0.1   podcast.metafilter.test
 127.0.0.1   projects.metafilter.test
 ```
+
+## Run development server
+
+Start the frontend build server using `docker compose run --rm --service-ports npm run dev`.
+This will start a server on port 5173 that will hot reload on frontend changes.
+
+Start the backend server using `docker compose run --rm --service-ports artisan serve`.
+The development server should then be accessible at http://www.metafilter.test:8000/, with hot reloading on frontend changes.
