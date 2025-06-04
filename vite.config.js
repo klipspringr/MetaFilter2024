@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import { resolve } from 'path';
 
-// Get host from command line or use default
+// Get host from the environment or use default
 const appHost = process.env.APP_HOST || 'metafilter.test';
 const subdomains = [
     'www', 
@@ -21,6 +21,7 @@ const allowedHosts = [appHost, ...subdomains.map(sub => `${sub}.${appHost}`)];
 
 // Serve on localhost by default
 const serverHost = process.env.VITE_HOST || 'localhost';
+const serverPort = parseInt(process.env.VITE_PORT || '5173') || 5173;
 
 // noinspection JSUnusedGlobalSymbols
 export default defineConfig({
@@ -37,7 +38,7 @@ export default defineConfig({
         hmr: { host: serverHost },
         cors: true,
         strictPort: true,
-        port: 5173,
+        port: serverPort,
     },
     plugins: [
         laravel({
