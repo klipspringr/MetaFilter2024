@@ -22,13 +22,16 @@ nav ul li {
     display: block;
 }
 
-.dropdown-toggle > img {
+.dropdown-toggle>img {
     pointer-events: none;
 }
 
 .global-header .container {
-    padding: 1rem 0 1rem 0;
     position: relative;
+}
+
+.global-header .container>:not(.utility-navigation) {
+    padding: 1rem 0;
 }
 
 .global-navigation-menu {
@@ -47,7 +50,7 @@ nav ul li {
 
 .utility-navigation {
     position: relative;
-    top: -1.15rem;
+    align-self: flex-start;
 }
 
 .utility-navigation .icon {
@@ -59,8 +62,15 @@ nav ul li {
     border-bottom-left-radius: 0.25rem;
 }
 
-.utility-navigation-menu li:last-child a {
+.utility-navigation-menu li:last-child a,
+.utility-navigation-menu .logout-button {
     border-bottom-right-radius: 0.25rem;
+}
+
+.utility-navigation-menu .logout-button {
+    border-top: none;
+    border-left: none;
+    border-right: none;
 }
 
 @include breakpoints.phone-only() {
@@ -74,6 +84,7 @@ nav ul li {
         width: 25%;
     }
 }
+
 /*
 .global-header .container .navbar-menu {
     position: absolute;

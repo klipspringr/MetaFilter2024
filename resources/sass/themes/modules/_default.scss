@@ -1,4 +1,3 @@
-
 input:focus {
     outline: 2px solid var(--royal-blue);
     box-shadow: 1px 1px 8px 1px var(--royal-blue);
@@ -27,7 +26,7 @@ input:focus::placeholder {
     background-color: inherit;
 }
 
-.global-header{
+.global-header {
     color: var(--white);
     background-color: var(--base-color);
 }
@@ -87,7 +86,7 @@ input:focus::placeholder {
 
 .logout-button:active,
 .logout-button:hover {
-    border-bottom-color: var(--black);
+    border-bottom-color: var(--dark-gray);
 }
 
 .site-header .dropdown-toggle {
@@ -138,6 +137,7 @@ input[type='search']:focus {
 .minimal .site-header {
     background-color: var(--base-color);
 }
+
 .site-header {
     border-top: 3px solid var(--yellow-green);
 }
