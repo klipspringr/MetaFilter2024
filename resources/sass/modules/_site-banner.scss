@@ -1,4 +1,3 @@
-
 .site-banner {
     color: var(--black);
     background-color: var(--yellow-green);
@@ -15,4 +14,20 @@
 
 .site-banner li:last-child::after {
     content: '';
+}
+
+.site-banner.collapsible-container.is-expanded ul.site-banner-links {
+    padding-top: 3px;
+}
+
+.site-banner.collapsible-container button.site-banner-toggle {
+    height: 2.5rem;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.site-banner.collapsible-container.is-expanded button.site-banner-toggle {
+    border: none;
+    height: 100%;
+    padding-block: 5px;
 }
