@@ -30,6 +30,8 @@ services:
     tty: true
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
@@ -133,4 +135,5 @@ services:
       - metafilter
 
 volumes:
+  mysql-data:
   node-modules:
