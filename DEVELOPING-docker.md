@@ -71,8 +71,10 @@ The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` 
 
 ## Run development server
 
-Start the frontend build server using `docker compose run --rm --service-ports npm run dev`.
-This will start a server on port 5173 that will hot reload on frontend changes.
+Start the frontend and backend development servers using `docker compose --profile=dev-server up`.
 
-Start the backend server using `docker compose run --rm --service-ports artisan serve`.
+You can also start the services individually in separate terminals with:
+- `docker compose run --rm --service-ports dev-frontend`
+- `docker compose run --rm --service-ports dev-backend`
+
 The development server should then be accessible at http://www.metafilter.test:8000/, with hot reloading on frontend changes.
