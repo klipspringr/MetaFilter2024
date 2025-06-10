@@ -30,6 +30,8 @@ services:
     tty: true
     ports:
       - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
@@ -90,12 +92,16 @@ services:
     image: node:current-alpine
     volumes:
       - .:/MetaFilter2024
+      - node-modules:/MetaFilter2024/node_modules
     ports:
       - "3000:3000"
       - "3001:3001"
-      - "5173:5173"
     working_dir: /MetaFilter2024
     entrypoint: [ 'npm' ]
+    environment:
+      - APP_HOST
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT
     profiles:
       - tools
     networks:
@@ -113,8 +119,8 @@ services:
       - DB_DATABASE
       - DB_USERNAME
       - DB_PASSWORD
-    ports:
-      - "8000:8000"
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
     volumes:
       - .:/var/www/html:delegated
     depends_on:
@@ -124,3 +130,53 @@ services:
       - tools
     networks:
       - metafilter
+
+  dev-frontend:
+    image: node:current-alpine
+    volumes:
+      - .:/MetaFilter2024
+      - node-modules:/MetaFilter2024/node_modules
+    ports:
+      - "5173:5173"
+    working_dir: /MetaFilter2024
+    entrypoint: [ 'npm' ]
+    command: ['run', 'dev']
+    environment:
+      - APP_HOST
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT
+    profiles:
+      - dev-server
+    networks:
+      - metafilter
+
+  dev-backend:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.php
+      args:
+        - UID=${UID:-1000}
+        - GID=${GID:-1000}
+    environment:
+      - DB_HOST=mysql
+      - DB_DATABASE
+      - DB_USERNAME
+      - DB_PASSWORD
+      - SERVER_HOST=0.0.0.0
+      - SERVER_PORT=8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/var/www/html:delegated
+    depends_on:
+      - mysql
+    entrypoint: [ 'php', '/var/www/html/artisan' ]
+    command: ['serve']
+    profiles:
+      - dev-server
+    networks:
+      - metafilter
+
+volumes:
+  mysql-data:
+  node-modules:
