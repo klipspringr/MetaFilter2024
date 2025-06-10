@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\RoleNameEnum;
 use App\Presenters\UserPresenter;
 use App\States\User\UserState;
 use Coderflex\LaravelPresenter\Concerns\CanPresent;
@@ -118,6 +119,6 @@ final class User extends Authenticatable implements
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return false;
+        return $this->hasRole(RoleNameEnum::MODERATOR->value);
     }
 }
