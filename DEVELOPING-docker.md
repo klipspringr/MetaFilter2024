@@ -78,3 +78,24 @@ You can also start the services individually in separate terminals with:
 - `docker compose run --rm --service-ports dev-backend`
 
 The development server should then be accessible at http://www.metafilter.test:8000/, with hot reloading on frontend changes.
+
+
+## Create an admin account
+
+The `AdminSeeder` can import an account from JSON and assign it the `moderator` role. Create a JSON at `storage/app/imports/metafilter-admins.json`:
+
+```json
+[
+  {
+    "name": "Dev Eloper",
+    "username": "developer",
+    "email": "developer@metafilter.test",
+    "password": "password",
+    "legacy_id": null
+  }
+]
+```
+
+Then, run the seeder using `docker compose run --rm artisan mefi:run-admin-seeder`.
+
+After logging in with an admin account, you should be able to browse to http://www.metafilter.test/admin and see the admin screens.
