@@ -23,7 +23,7 @@ final class CommentService
     {
         try {
             $data = [
-                'body' => $this->purifierService->clean($dto->body),
+                'text' => $this->purifierService->clean($dto->text),
                 'post_id' => $dto->post_id,
                 'user_id' => $dto->user_id,
                 'parent_id' => $dto->parent_id,

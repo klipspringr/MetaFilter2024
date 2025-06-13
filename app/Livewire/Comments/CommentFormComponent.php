@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Traits\LoggingTrait;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 final class CommentFormComponent extends Component
@@ -53,6 +54,14 @@ final class CommentFormComponent extends Component
     protected function rules(): array
     {
         return (new StoreCommentRequest())->rules();
+    }
+
+    #[On(LivewireEventEnum::EditorUpdated->value)]
+    public function saveEditorContent($editorId, $content): void
+    {
+        if ($editorId === 'comment-text') {
+            $this->body = $content;
+        }
     }
 
     public function submit(): void

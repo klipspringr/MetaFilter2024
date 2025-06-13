@@ -1,5 +1,5 @@
 <article class="comment">
-    {{ $comment->body }}
+    {!! $comment->body !!}
 
     <footer class="comment-footer">
         <p>

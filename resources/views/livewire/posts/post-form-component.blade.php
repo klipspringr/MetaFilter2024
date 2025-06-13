@@ -16,7 +16,7 @@
 
     <div wire:ignore>
         <livewire:wysiwyg.wysiwyg-component
-            editor-id="more_inside"
+            editor-id="more-inside"
             label="{{ trans('More Inside') }}"
         />
     </div>

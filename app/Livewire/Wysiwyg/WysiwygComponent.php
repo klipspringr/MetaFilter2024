@@ -12,12 +12,14 @@ final class WysiwygComponent extends Component
     public string $content = '';
     public string $editorId;
     public string $label;
+    public string $name;
 
-    public function mount(string $editorId, string $content = '', string $label = ''): void
+    public function mount(string $editorId, string $content = '', string $label = '', string $name = ''): void
     {
         $this->editorId = $editorId;
         $this->content = $content;
         $this->label = $label;
+        $this->name = $name ?: $editorId;
     }
 
     public function updatedContent($value): void

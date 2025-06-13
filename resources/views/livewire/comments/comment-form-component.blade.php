@@ -7,16 +7,22 @@
         id="edit-comment-form-{{ $comment->id }}"
     @endif
 >
+    @include('forms.partials.csrf-token')
     @include('forms.partials.validation-summary')
     @include('livewire.common.partials.posting-as')
 
     <fieldset>
         <div wire:ignore>
-            <label for="body" class="sr-only">
+            <label for="comment-text" class="sr-only">
                 {{ trans('Comment') }}
             </label>
 
-            <textarea wire:model="text" name="text" id="text" class="comment-textarea"></textarea>
+            <div wire:ignore>
+                <livewire:wysiwyg.wysiwyg-component
+                    editor-id="comment-text"
+                    name="text"
+                />
+            </div>
 
             <div class="level">
                 @if($isEditing === true || $isReplying === true)

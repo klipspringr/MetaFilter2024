@@ -55,7 +55,7 @@ final class PostFormComponent extends Component
         if ($editorId == "post-body") {
             $this->body = $content;
         }
-        if ($editorId == "more_inside") {
+        if ($editorId == "more-inside") {
             $this->more_inside = $content;
         }
     }

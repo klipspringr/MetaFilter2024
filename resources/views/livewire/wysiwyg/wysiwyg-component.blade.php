@@ -4,7 +4,7 @@
     @endif
 
     <textarea
-        name="{{ $editorId }}"
+        name="{{ $name }}"
         class="wysiwyg"
         id="{{ $editorId }}"
         data-editor-id="{{ $editorId }}"
