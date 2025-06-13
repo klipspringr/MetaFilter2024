@@ -19,6 +19,10 @@ main input[type='url'] {
     width: 100%;
 }
 
+textarea.comment-textarea {
+    resize: block;
+}
+
 input[type='radio'] {
     appearance: none;
     background-color: inherit;

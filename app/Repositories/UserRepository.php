@@ -18,7 +18,7 @@ final class UserRepository extends BaseRepository implements UserRepositoryInter
     {
         return User::create([
             'username' => $dto->username,
-            'name' => $this->name ?? null,
+            'name' => $dto->name ?? null,
             'email' => $dto->email,
             'password' => $dto->password,
             'state' => $dto->state,

@@ -13,23 +13,17 @@ final class ContactTypeController extends Controller
 {
     public function index(): View
     {
-        $viewPath = 'contact-types.index';
-
-        return view($viewPath);
+        return view('contact-types.index');
     }
 
     public function show(ContactType $contactType): View
     {
-        $viewPath = 'contact-types.show';
-
-        return view($viewPath, compact('contactType'));
+        return view('contact-types.show', compact('contactType'));
     }
 
     public function create(): View
     {
-        $viewPath = 'contact-types.create';
-
-        return view($viewPath);
+        return view('contact-types.create');
     }
 
     public function store(StoreContactTypeRequest $request): void
@@ -39,9 +33,7 @@ final class ContactTypeController extends Controller
 
     public function edit(ContactType $contactType): View
     {
-        $viewPath = 'contact-types.edit';
-
-        return view($viewPath, compact('contactType'));
+        return view('contact-types.edit', compact('contactType'));
     }
 
     public function update(UpdateContactTypeRequest $request, ContactType $contactType): void

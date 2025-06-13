@@ -17,7 +17,7 @@ final class CommentForm extends Form
     public ?Comment $comment = null;
 
     #[Validate('required|min:5')]
-    public string $text = '';
+    public string $body = '';
 
     public function setComment(Comment $comment): void
     {
@@ -31,8 +31,8 @@ final class CommentForm extends Form
             $this->validate();
 
             $dto = new CommentDto(
-                body: $this->body,
-                post_id: $this->postId,
+                text: $this->body,
+                post_id: $this->postId, // TODO: Need to set postId property
                 user_id: auth()->id(),
                 parent_id: null,
             );

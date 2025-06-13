@@ -139,6 +139,7 @@ final class PostWizardComponent extends BaseWizardComponent
                 title: $this->title,
                 body: $this->body,
                 more_inside: $this->more_inside,
+                tags: null, // Tags will be handled in a later step
                 user_id: $this->userId,
                 subsite_id: $this->subsiteId,
                 state: $state,

@@ -17,7 +17,7 @@ final class CommentForm extends Form
     public Comment $comment;
     public int $authorizedUserId;
     public ?int $userId = null;
-    public string $text = '';
+    public string $body = '';
     public int $postId = 0;
     public ?int $parentId = null;
     public ?object $parent = null;

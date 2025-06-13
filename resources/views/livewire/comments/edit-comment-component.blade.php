@@ -6,7 +6,7 @@
 
         @if ($isEditing)
             <form wire:submit.prevent="updateComment()">
-                <textarea wire:model="content"></textarea>
+                <textarea wire:model="content" class="comment-textarea"></textarea>
 
                 @error('content')
                     <span class="text-danger">

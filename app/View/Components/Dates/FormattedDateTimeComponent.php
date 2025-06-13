@@ -11,7 +11,7 @@ use Illuminate\View\Component;
 final class FormattedDateTimeComponent extends Component
 {
     public Carbon $date;
-    public string $format;
+    public string $format = 'Y-m-d H:i:s';
 
     public function __construct(Carbon $date, $format = null)
     {

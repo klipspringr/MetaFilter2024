@@ -91,7 +91,7 @@ final class Post extends BaseModel implements CanPresent, HasMedia
             'title' => $this->title,
             'body' => $this->body,
             'more_inside' => $this->more_inside,
-            'created_at' => $this->created_at->timestamp,
+            'created_at' => $this->created_at,
         ]);
     }
 

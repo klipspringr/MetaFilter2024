@@ -6,6 +6,7 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
+use Lubusin\Decomposer\Controllers\DecomposerController;
 
 $appUrl = config('app.url');
 
@@ -78,5 +79,7 @@ Route::domain('www.' . $appUrl)
 Route::domain('www.' . $appUrl)
     ->middleware($middleware)
     ->group(base_path('routes/subdomains/metafilter.php'));
+
+Route::get('decompose', [DecomposerController::class, 'index']);
 
 Route::any('{any}', [PageController::class, 'show']);

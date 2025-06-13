@@ -26,8 +26,6 @@ final class PopularFavoritesController extends BaseController
 
     public function index(): View
     {
-        $urlSegment = request()->segment(1);
-
         $subdomain = $this->getSubdomain();
 
         $posts = $this->postRepository->getPopularFavorites();

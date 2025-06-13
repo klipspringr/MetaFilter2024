@@ -52,14 +52,6 @@ docker compose run --rm artisan migrate
 docker compose run --rm artisan db:seed
 ```
 
-## Run development server
-
-Additional options are required to get the right behavior for `php artisan serve`:
-
-```
-docker compose run --rm --service-ports artisan serve --host=0.0.0.0
-```
-
 ## Configure test host names
 
 The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` will not show the site. Add the following to `/etc/hosts` so you can browse instead to `http://www.metafilter.test/` and see the right routes:
@@ -76,3 +68,34 @@ The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` 
 127.0.0.1   podcast.metafilter.test
 127.0.0.1   projects.metafilter.test
 ```
+
+## Run development server
+
+Start the frontend and backend development servers using `docker compose --profile=dev-server up`.
+
+You can also start the services individually in separate terminals with:
+- `docker compose run --rm --service-ports dev-frontend`
+- `docker compose run --rm --service-ports dev-backend`
+
+The development server should then be accessible at http://www.metafilter.test:8000/, with hot reloading on frontend changes.
+
+
+## Create an admin account
+
+The `AdminSeeder` can import an account from JSON and assign it the `moderator` role. Create a JSON at `storage/app/imports/metafilter-admins.json`:
+
+```json
+[
+  {
+    "name": "Dev Eloper",
+    "username": "developer",
+    "email": "developer@metafilter.test",
+    "password": "password",
+    "legacy_id": null
+  }
+]
+```
+
+Then, run the seeder using `docker compose run --rm artisan mefi:run-admin-seeder`.
+
+After logging in with an admin account, you should be able to browse to http://www.metafilter.test/admin and see the admin screens.

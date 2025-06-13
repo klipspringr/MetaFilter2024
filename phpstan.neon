@@ -9,7 +9,11 @@ parameters:
     level: 5
 
     ignoreErrors:
+#        - '#PHPDoc tag @var#'
         - '#Trait .* is used zero times and is not analysed.#'
+
+#    excludePaths:
+#        - ./*/*/FileToBeExcluded.php
 
     stubFiles:
         - stubs/view.stub
