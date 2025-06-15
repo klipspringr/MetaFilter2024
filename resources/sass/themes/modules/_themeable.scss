@@ -231,7 +231,7 @@ a.next:link .title,
 a.next:visited .title,
 a.previous:link .title,
 a.previous:visited .title {
-    color: var(--base-color);
+    color: light-dark(var(--base-color), var(--white));
 }
 
 a.next:active .title,
