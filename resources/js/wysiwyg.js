@@ -1,3 +1,6 @@
+// Unique symbol for identifying cleanup functions.
+const cleanupKey = Symbol('cleanup');
+
 // Set up a single textarea with CKEditor
 async function initializeEditor(textarea, component) {
     try {
@@ -11,16 +14,26 @@ async function initializeEditor(textarea, component) {
         });
 
         // Reset the editor content when we receive a notification from the backend.
-        document.addEventListener('editor:clear', (event) => {
+        const onEditorClear = (event) => {
             if (event.detail.editorId === editorId) {
                 editor.setData('');
             }
-        });
+        };
+
+        document.addEventListener('editor:clear', onEditorClear);
 
         // Update the component's content property when the force sync event is received
-        document.addEventListener('livewire:force-sync', () => {
+        const onForceSync = () => {
             component.$wire.$set('content', editor.getData());
-        });
+        };
+
+        document.addEventListener('livewire:force-sync', onForceSync);
+
+        textarea[cleanupKey] = () => {
+            document.removeEventListener('editor:clear', onEditorClear);
+            document.removeEventListener('livewire:force-sync', onForceSync);
+            editor.destroy().catch(e => console.error('Error destroying editor', e));
+        };
     } catch (error) {
         console.error('Unable to initialize CKEditor', error);
     }
@@ -38,5 +51,14 @@ document.addEventListener('livewire:init', () => {
             default:
                 break;
         }
-    })
+    });
+
+    Livewire.hook('morph.removing', ({ el }) => {
+        // Check for textarea elements that need cleanup.
+        for (const textarea of el.querySelectorAll('textarea')) {
+            if (typeof textarea[cleanupKey] === 'function') {
+                textarea[cleanupKey]();
+            }
+        }
+    });
 });
