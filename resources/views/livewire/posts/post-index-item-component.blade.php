@@ -2,7 +2,7 @@
     @include('posts.partials.post-header', [
     ])
 
-    {{ $post->body }}
+    {!! $post->body !!}
 
     @include('posts.partials.post-index-footer')
 </article>

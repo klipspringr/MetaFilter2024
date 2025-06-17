@@ -10,6 +10,7 @@ use App\Models\Comment;
 use App\Traits\LoggingTrait;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 final class CommentFormComponent extends Component
@@ -25,6 +26,7 @@ final class CommentFormComponent extends Component
     public int $postId;
     public ?int $parentId = null;
     public ?string $message = null;
+    public string $editorId = '';
 
     public function mount(
         int $postId,
@@ -43,6 +45,10 @@ final class CommentFormComponent extends Component
 
         $this->comment = $comment ?? null;
         $this->body = $this->comment->body ?? '';
+
+        if ($this->editorId === '') {
+            $this->editorId = uniqid('comment-editor-' . ($this->comment->id ?? 'new') . '-');
+        }
     }
 
     public function render(): View
@@ -53,6 +59,16 @@ final class CommentFormComponent extends Component
     protected function rules(): array
     {
         return (new StoreCommentRequest())->rules();
+    }
+
+    #[On(LivewireEventEnum::EditorUpdated->value)]
+    public function handleEditorUpdated($editorId, $content): void
+    {
+        if ($this->editorId !== $editorId) {
+            return;
+        }
+
+        $this->body = $content;
     }
 
     public function submit(): void
@@ -88,6 +104,7 @@ final class CommentFormComponent extends Component
         }
 
         $this->reset('body');
+        $this->dispatch('editor:clear', editorId: $this->editorId);
     }
 
     public function update(): void

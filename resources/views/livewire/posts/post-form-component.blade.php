@@ -15,11 +15,11 @@
     </div>
 
     <div wire:ignore>
-        <x-forms.textarea
-            name="more_inside"
-            label="{{ trans('More Inside') }}" />
+        <livewire:wysiwyg.wysiwyg-component
+            editor-id="more-inside"
+            label="{{ trans('More Inside') }}"
+        />
     </div>
-
     <x-forms.input
         name="tags"
         type="text"
@@ -34,7 +34,3 @@
         {{ trans('Preview') }}
     </button>
 </form>
-
-@push('scripts')
-    @include('livewire.posts.partials.wysiwyg-scripts')
-@endpush

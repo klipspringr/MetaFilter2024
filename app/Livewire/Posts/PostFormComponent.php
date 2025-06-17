@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Livewire\Posts;
 
 use App\Dtos\PostDto;
+use App\Enums\LivewireEventEnum;
 use App\Enums\PostStateEnum;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Services\PostService;
 use App\Traits\LoggingTrait;
 use App\Traits\SubsiteTrait;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 final class PostFormComponent extends Component
@@ -47,6 +49,17 @@ final class PostFormComponent extends Component
         return view('livewire.posts.post-form-component');
     }
 
+    #[On(LivewireEventEnum::EditorUpdated->value)]
+    public function saveEditorContent($editorId, $content): void
+    {
+        if ($editorId == "post-body") {
+            $this->body = $content;
+        }
+        if ($editorId == "more-inside") {
+            $this->more_inside = $content;
+        }
+    }
+
     public function store(): void
     {
         $this->validate();
@@ -65,12 +78,15 @@ final class PostFormComponent extends Component
 
         $post = $this->postService->store($dto);
 
+        // TODO: Needs to preview first instead of just saving
         if ($post) {
             $this->logInfo('Post created');
 
             session()->flash('message', 'Post created');
 
-            $this->redirect(route('posts.show', $post));
+            $slug = $post->slug;
+
+            $this->redirect(route('metafilter.posts.show', ['post' => $post, 'slug' => $post->slug]));
         } else {
             $this->logError('Post creation failed');
 

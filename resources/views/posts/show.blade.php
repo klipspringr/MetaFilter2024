@@ -57,11 +57,6 @@
                 {{ trans('Add a comment') }}
             </h2>
 
-            @livewire('wysiwyg.wysiwyg-component', [
-                'editorId' => 'add-comment-editor',
-                'content' => ''
-            ])
-
             <livewire:comments.comment-form-component
                 :post-id="$post->id"
             />
