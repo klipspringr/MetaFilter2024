@@ -221,17 +221,9 @@ a.next:link,
 a.next:visited,
 a.previous:link,
 a.previous:visited {
-    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: var(--lighter-base-color);
-}
-
-a.next:link .title,
-a.next:visited .title,
-a.previous:link .title,
-a.previous:visited .title {
-    color: var(--base-color);
 }
 
 a.next:active .title,
