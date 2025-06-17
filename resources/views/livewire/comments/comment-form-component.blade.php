@@ -1,10 +1,9 @@
 <form
     wire:submit.prevent="submit"
     @if ($isEditing === true)
-        id="reply-to-comment-form-{{ $comment->id }}"
-    @endif
-    @if ($isReplying === true)
         id="edit-comment-form-{{ $comment->id }}"
+    @elseif ($isReplying === true)
+        id="reply-to-comment-form-{{ $comment->id }}"
     @endif
 >
     @include('forms.partials.csrf-token')
@@ -13,16 +12,14 @@
 
     <fieldset>
         <div wire:ignore>
-            <label for="comment-text" class="sr-only">
+            <label for="{{ $this->editorId }}" class="sr-only">
                 {{ trans('Comment') }}
             </label>
 
-            <div wire:ignore>
-                <livewire:wysiwyg.wysiwyg-component
-                    editor-id="comment-text"
+            <livewire:wysiwyg.wysiwyg-component
+                    editor-id="{{ $this->editorId }}"
                     name="text"
-                />
-            </div>
+                    content="{!! $comment->body !!}" />
 
             <div class="level">
                 @if($isEditing === true || $isReplying === true)
@@ -47,19 +44,3 @@
         </div>
     </fieldset>
 </form>
-
-{{--
-@livewire('wysiwyg-editor', ['editorId' => 'editor1', 'content' => 'Initial content 1'])
-
-<input wire:model="content" type="text">
-
-<small class="smaller">
-    <x-icons.icon-component filename="markdown-fill" />
-    <a href="https://www.markdownguide.org/basic-syntax/"
-       class="text-link"
-       target="_blank">
-        {{ trans('Styling with Markdown is supported') }}
-    </a>
-    <x-icons.icon-component filename="box-arrow-up-right" alt-text="Opens in new tab or window" />
-</small>
---}}

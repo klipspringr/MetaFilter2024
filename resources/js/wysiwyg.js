@@ -1,30 +1,42 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const editorConfig = JSON.parse(document.querySelector('meta[name="ckeditor-config"]')?.content || 'null') || {};
+// Set up a single textarea with CKEditor
+async function initializeEditor(textarea, component) {
+    try {
+        const editorConfig = JSON.parse(document.querySelector('meta[name="ckeditor-config"]')?.content || 'null') || {}
+        const editor = await ClassicEditor.create(textarea, editorConfig);
+        const editorId = textarea.dataset.editorId;
 
-    function initializeEditors() {
-        document.querySelectorAll('.wysiwyg:not(.ck-editor__editable)').forEach(textarea => {
-            textarea.classList.add('comment-textarea');
-            ClassicEditor
-                .create(textarea, editorConfig)
-                .then(editor => {
-                    editor.model.document.on('change:data', () => {
-                        Livewire.dispatch('editorUpdated', {
-                            editorId: textarea.dataset.editorId,
-                            content: editor.getData()
-                        });
-                    });
-                })
-                .catch(error => console.error(error));
+        // Listen for changes to the editor content and update the component's content property
+        editor.model.document.on('change:data', () => {
+            component.$wire.$set('content', editor.getData());
         });
+
+        // Reset the editor content when we receive a notification from the backend.
+        document.addEventListener('editor:clear', (event) => {
+            if (event.detail.editorId === editorId) {
+                editor.setData('');
+            }
+        });
+
+        // Update the component's content property when the force sync event is received
+        document.addEventListener('livewire:force-sync', () => {
+            component.$wire.$set('content', editor.getData());
+        });
+    } catch (error) {
+        console.error('Unable to initialize CKEditor', error);
     }
+}
 
-    // Initialize editors on page load
-    initializeEditors();
-
-    // Initialize editors when Livewire updates the DOM
-    document.addEventListener('livewire:load', function () {
-        Livewire.hook('message.processed', (message, component) => {
-            initializeEditors();
-        });
-    });
+// Initialize WysiwygComponent editors when the elements are initialized by Livewire.
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('element.init', ({ component, el }) => {
+        switch (component.name) {
+            case 'wysiwyg.wysiwyg-component':
+                if (el instanceof HTMLTextAreaElement) {
+                    initializeEditor(el, component);
+                }
+                break;
+            default:
+                break;
+        }
+    })
 });

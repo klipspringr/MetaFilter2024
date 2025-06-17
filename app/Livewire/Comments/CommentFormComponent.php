@@ -26,6 +26,7 @@ final class CommentFormComponent extends Component
     public int $postId;
     public ?int $parentId = null;
     public ?string $message = null;
+    public string $editorId = '';
 
     public function mount(
         int $postId,
@@ -44,6 +45,10 @@ final class CommentFormComponent extends Component
 
         $this->comment = $comment ?? null;
         $this->body = $this->comment->body ?? '';
+
+        if ($this->editorId === '') {
+            $this->editorId = uniqid('comment-editor-' . ($this->comment->id ?? 'new') . '-');
+        }
     }
 
     public function render(): View
@@ -57,11 +62,13 @@ final class CommentFormComponent extends Component
     }
 
     #[On(LivewireEventEnum::EditorUpdated->value)]
-    public function saveEditorContent($editorId, $content): void
+    public function handleEditorUpdated($editorId, $content): void
     {
-        if ($editorId === 'comment-text') {
-            $this->body = $content;
+        if ($this->editorId !== $editorId) {
+            return;
         }
+
+        $this->body = $content;
     }
 
     public function submit(): void
@@ -97,6 +104,7 @@ final class CommentFormComponent extends Component
         }
 
         $this->reset('body');
+        $this->dispatch('editor:clear', editorId: $this->editorId);
     }
 
     public function update(): void

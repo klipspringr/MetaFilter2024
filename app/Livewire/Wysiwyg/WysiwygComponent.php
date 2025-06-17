@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Wysiwyg;
 
+use App\Enums\LivewireEventEnum;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -24,7 +25,7 @@ final class WysiwygComponent extends Component
 
     public function updatedContent($value): void
     {
-        $this->dispatch('editorUpdated', editorId: $this->editorId, content: $value);
+        $this->dispatch(LivewireEventEnum::EditorUpdated->value, editorId: $this->editorId, content: $value);
     }
 
     public function render(): View
