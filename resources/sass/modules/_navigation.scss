@@ -63,7 +63,7 @@ nav ul li {
 }
 
 .utility-navigation-menu li:last-child a,
-.utility-navigation-menu .logout-button {
+.utility-navigation-menu li:last-child .logout-button {
     border-bottom-right-radius: 0.25rem;
 }
 
@@ -71,6 +71,21 @@ nav ul li {
     border-top: none;
     border-left: none;
     border-right: none;
+    border-bottom-right-radius: 0;
+}
+
+nav .search-and-results search form {
+    background-color: unset;
+}
+
+nav .search-and-results search form button {
+    color: var(--black);
+    background-color: var(--yellow-green);
+}
+
+nav .search-and-results search form button:hover {
+    color: var(--yellow-green);
+    background-color: var(--black);
 }
 
 @include breakpoints.phone-only() {

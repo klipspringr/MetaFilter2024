@@ -1,4 +1,3 @@
-
 // https://blog.logrocket.com/style-forms-css/
 
 :root {
@@ -96,7 +95,8 @@ input[type='radio']:focus {
     color: #fff;
 }
 
-.input-icon, .input-with-icon {
+.input-icon,
+.input-with-icon {
     padding: 10px;
 }
 
@@ -165,7 +165,7 @@ fieldset:last-of-type {
     margin: 0 0 1rem 0;
 }
 
-input + small {
+input+small {
     margin-top: 0.25rem;
     margin-right: 0.25rem;
     margin-left: 0.25rem;
@@ -249,9 +249,7 @@ form small.form-note {
     padding-bottom: 0.25rem;
 }
 
-label.optional {
-
-}
+label.optional {}
 
 .required-field {
     color: var(--is-danger);

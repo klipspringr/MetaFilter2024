@@ -1,4 +1,9 @@
 <section class="posts">
+@if($posts->isEmpty())
+    @auth
+        <x-buttons.new-post-button />
+    @endauth
+@else
     @php
         $previousMonthDay = null;
     @endphp
@@ -17,4 +22,5 @@
     @endforeach
 
     {{ $posts->links() }}
+@endif
 </section>

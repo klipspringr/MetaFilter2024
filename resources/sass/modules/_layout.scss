@@ -68,6 +68,10 @@ body {
     position: relative;
 }
 
+.main-contents>section.posts>* {
+    padding-inline: 0.75rem;
+}
+
 .main-sidebar {
     display: flex;
     flex-direction: column;
