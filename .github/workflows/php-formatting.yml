@@ -1,0 +1,34 @@
+name: PHP Formatting Check
+
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  php-formatting:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    - name: Run Laravel Pint formatting check
+      run: |
+        # Run pint and capture changes
+        docker run --rm \
+          --entrypoint /bin/sh \
+          -v ${{ github.workspace }}:/app \
+          bitnami/laravel:11 \
+          -c "composer install --no-autoloader && ./vendor/bin/pint"
+
+        # Check if there are any changes after running pint
+        if [[ -n $(git diff --name-only) ]]; then
+          echo "❌ PHP formatting issues detected. The following files need formatting:"
+          git diff --name-only
+          echo ""
+          echo "Please run 'php artisan pint' locally and commit the changes."
+          exit 1
+        else
+          echo "✅ All PHP files are properly formatted."
+        fi

@@ -52,10 +52,10 @@ final class PostFormComponent extends Component
     #[On(LivewireEventEnum::EditorUpdated->value)]
     public function saveEditorContent($editorId, $content): void
     {
-        if ($editorId == "post-body") {
+        if ($editorId === 'post-body') {
             $this->body = $content;
         }
-        if ($editorId == "more-inside") {
+        if ($editorId === 'more-inside') {
             $this->more_inside = $content;
         }
     }
