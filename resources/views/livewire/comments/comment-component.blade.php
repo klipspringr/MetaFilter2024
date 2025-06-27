@@ -2,11 +2,6 @@
     {!! $comment->body !!}
 
     <footer class="comment-footer">
-        <p>
-            <x-icons.icon-component filename="card-text"/>
-            {{ $wordCount . ' ' .  trans('words') }}
-        </p>
-
         <x-members.profile-link-component :user="$comment->user"/>
 
         @include('comments.partials.comment-timestamp', [

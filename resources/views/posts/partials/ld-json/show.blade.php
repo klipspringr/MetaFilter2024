@@ -27,6 +27,5 @@
     "datePublished": "{{ $post->created_at }}",
     "dateModified": "{{ $post->updated_at }}",
     "articleBody": "{!! strip_tags($post->body) !!}",
-    "url": "{{ url()->current() }}",
-    "wordCount": "{{ str_word_count(strip_tags($post->body)) }}"
+    "url": "{{ url()->current() }}"
 @endsection
