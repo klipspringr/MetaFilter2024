@@ -11,7 +11,6 @@ use App\Models\Post;
 use App\Models\User;
 use App\Traits\CommentComponentTrait;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -24,13 +23,12 @@ final class CommentComponent extends Component
     public string $body = '';
     public ?int $parentId = null;
     public int $flagCount = 0;
-    public string $flagIconFilename = 'flag';
-    public string $flagButtonText = '';
     public bool $userFlagged = false;
 
     // State
     public bool $isEditing = false;
     public bool $isFlagging = false;
+    public bool $isFlagLoading = false;
     public bool $isReplying = false;
 
     public Comment $comment;
@@ -52,10 +50,6 @@ final class CommentComponent extends Component
         $this->user = auth()->user() ?? null;
 
         $this->updateFlagCount();
-        $this->hasUserFlagged();
-
-        $this->flagIconFilename = $this->getFlagIconFilename();
-        $this->flagButtonText = $this->getFlagTitleText();
     }
 
     public function render(): View
@@ -63,31 +57,9 @@ final class CommentComponent extends Component
         return view('livewire.comments.comment-component');
     }
 
-    private function getFlagIconFilename(): string
-    {
-        return $this->userFlagged ? 'flag-fill' : 'flag';
-    }
-
-    private function getFlagTitleText(): string
-    {
-        return $this->userFlagged ? trans('Remove flag') : trans('Flag this comment');
-    }
-
-    private function hasUserFlagged(): void
-    {
-        $userFlagCount = DB::table(table: 'markable_flags')
-            ->where(column: 'user_id', operator: '=', value: auth()->id())
-            ->where(column: 'markable_id', operator: '=', value: $this->comment->id)
-            ->where(column: 'markable_type', operator: 'LIKE', value: '%Comment%')
-            ->count();
-
-        $this->userFlagged = $userFlagCount > 0;
-    }
-
     #[On([
         LivewireEventEnum::CommentStored->value,
         LivewireEventEnum::CommentDeleted->value,
-        LivewireEventEnum::CommentFlagged->value,
         LivewireEventEnum::CommentUpdated->value,
         LivewireEventEnum::EscapeKeyClicked->value,
     ])]
@@ -98,27 +70,36 @@ final class CommentComponent extends Component
         ]);
 
         $this->stopEditing();
-        $this->stopFlagging();
         $this->stopReplying();
     }
 
     private function updateFlagCount(): void
     {
-        $this->flagCount = Flag::count($this->comment);
+        $this->flagCount = $this->comment->flagCount();
+        $this->userFlagged = $this->comment->userFlagged();
     }
 
-    #[On('comment-flagged.{comment.id}')]
-    public function addUserFlag(): void
+    public function addUserFlag(int $id): void
     {
-        \Log::debug('CommentComponent::addUserFlag');
+        if ($id !== $this->comment->id) {
+            return;
+        }
+
         $this->userFlagged = true;
-        $this->flagCount++;
+        // Requery as flag may have just been edited, not added
+        $this->updateFlagCount();
+        $this->stopFlagging();
     }
 
-    #[On('comment-flag-deleted.{comment.id}')]
-    public function removeUserFlag(): void
+    public function removeUserFlag(int $id): void
     {
+        if ($id !== $this->comment->id) {
+            return;
+        }
+
         $this->userFlagged = false;
-        $this->flagCount--;
+        // Requery as technically multiple flags could exist (though they shouldn't)
+        $this->updateFlagCount();
+        $this->stopFlagging();
     }
 }

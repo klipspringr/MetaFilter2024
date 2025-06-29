@@ -97,7 +97,19 @@ final class Comment extends BaseModel
 
     public function flagCount(): int
     {
-        return Flag::count($this);
+        return Flag::where([
+            'markable_id' => $this->getKey(),
+            'markable_type' => $this->getMorphClass(),
+        ])->count();
+    }
+
+    public function userFlagged(): bool
+    {
+        return Flag::where([
+            'user_id' => auth()->id(),
+            'markable_id' => $this->getKey(),
+            'markable_type' => $this->getMorphClass(),
+        ])->exists();
     }
 
     public function post(): BelongsTo

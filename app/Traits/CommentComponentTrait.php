@@ -48,6 +48,7 @@ trait CommentComponentTrait
     public function startFlagging(): void
     {
         $this->isFlagging = true;
+        $this->isFlagLoading = false;
         $this->stopEditing();
         $this->stopReplying();
     }
@@ -55,6 +56,7 @@ trait CommentComponentTrait
     public function stopFlagging(): void
     {
         $this->isFlagging = false;
+        $this->isFlagLoading = false;
     }
 
     public function startReplying(): void

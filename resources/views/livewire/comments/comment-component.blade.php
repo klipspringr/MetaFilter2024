@@ -39,8 +39,11 @@
     @if ($isFlagging === true)
         <livewire:flags.flag-component
             wire:key="'flagging-comment-' . $comment->id"
-            :comment-id="$comment->id"
             :model="$comment"
+            @comment-flagged="addUserFlag($event.detail.id)"
+            @comment-flag-cancelled="stopFlagging()"
+            @comment-flag-deleted="removeUserFlag($event.detail.id)"
+            @flag-loading="isFlagLoading = true"
         />
     @endif
 

@@ -7,6 +7,7 @@ namespace App\Enums;
 enum LivewireEventEnum: string
 {
     case CommentDeleted = 'comment-deleted';
+    case CommentFlagCancelled = 'comment-flag-cancelled';
     case CommentFlagDeleted = 'comment-flag-deleted';
     case CommentFlagged = 'comment-flagged';
     case CommentStored = 'comment-stored';
@@ -19,6 +20,7 @@ enum LivewireEventEnum: string
     case FlagDeleted = 'flag-deleted';
     case HideFlagCommentForm = 'hide-flag-comment-form';
     case PostDeleted = 'post-deleted';
+    case PostFlagCancelled = 'post-flag-cancelled';
     case PostFlagDeleted = 'post-flag-deleted';
     case PostFlagged = 'post-flagged';
     case PostStored = 'post-stored';

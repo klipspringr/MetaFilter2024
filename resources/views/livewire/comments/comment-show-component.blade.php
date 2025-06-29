@@ -32,7 +32,7 @@
             <livewire:favorites.favorite-component :model="$comment" />
 
             @auth
-                @if ($userFlagged === true)
+                @if ($userFlag !== null)
                     <button
                         class="button footer-button"
                         title="{{ trans('Remove flag') }}">
@@ -86,5 +86,6 @@
                 :model="$comment"
                 is-flagging="true"
             />
-    @endif
+        @endif
+    </footer>
 </article>

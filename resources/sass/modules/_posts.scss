@@ -1,7 +1,22 @@
-
 .comment,
 .post {
     margin: 0 0 2rem 0;
     padding: 0.75rem;
     border-radius: 0.25rem;
+}
+
+.button:not(.loading)>span.icon:not(.loading-icon) {
+    display: inline;
+}
+
+.button:not(.loading)>span.icon.loading-icon {
+    display: none;
+}
+
+.button.loading>span.icon:not(.loading-icon) {
+    display: none;
+}
+
+.button.loading>span.icon.loading-icon {
+    display: inline;
 }
