@@ -2,11 +2,13 @@
 
 ## Install Docker Desktop
 
-To use Docker Compose to run the services required for development, follow the [Getting Started instructions](https://docs.docker.com/get-started/get-docker/).
+To use Docker Compose to run the services required for development, follow the
+[Getting Started instructions](https://docs.docker.com/get-started/get-docker/).
 
 ## Environment settings
 
-Once you have Docker installed, `cp .env.example .env` to make a local copy of the environment settings file, and then edit to supply values for the database:
+Once you have Docker installed, `cp .env.example .env` to make a local copy of
+the environment settings file, and then edit to supply values for the database:
 
 ```
 DB_CONNECTION=mysql
@@ -17,16 +19,22 @@ DB_USERNAME=metafilter
 DB_PASSWORD=<come up with something>
 ```
 
-At this point, you should be able to run `docker compose up` and see logs from the different services (e.g. MySQL, Redis, Mailhog). Or, you can run `docker compose up -d` and the services will start in the background, and you can run `docker compose logs -f <service>` to follow the logs from a specific service.
+At this point, you should be able to run `docker compose up` and see logs from
+the different services (e.g. MySQL, Redis, Mailhog). Or, you can run `docker
+compose up -d` and the services will start in the background, and you can run
+`docker compose logs -f <service>` to follow the logs from a specific service.
 
 ## Run tool containers
 
-To help work around any differences in the tool versions available on your machine, or even just the lack of installed tools on your machine, there are tool containers that can be run ad-hoc.
+To help work around any differences in the tool versions available on your
+machine, or even just the lack of installed tools on your machine, there are
+tool containers that can be run ad-hoc.
 
--   `composer` - use `docker compose run --rm composer` followed by the arguments for `composer`.
--   `php artisan` - use `docker compose run --rm artisan` followed by the arguments for `php artisan` (see additional notes below for running `php artisan serve`).
--   `npm` - use `docker compose run --rm npm` follow by the arguments for `npm`
--   `mysql` - use `docker compose run --rm mysql mysql -h mysql -u metafilter -p` to access a `mysql` client
+- `composer` - use `docker compose run --rm composer` followed by the arguments for `composer`.
+- `php artisan` - use `docker compose run --rm artisan` followed by the arguments for `php artisan`
+  (see additional notes below for running `php artisan serve`).
+- `npm` - use `docker compose run --rm npm` follow by the arguments for `npm`
+- `mysql` - use `docker compose run --rm mysql mysql -h mysql -u metafilter -p` to access a `mysql` client
 
 ## Initial setup
 
@@ -54,7 +62,9 @@ docker compose run --rm artisan db:seed
 
 ## Configure test host names
 
-The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` will not show the site. Add the following to `/etc/hosts` so you can browse instead to `http://www.metafilter.test/` and see the right routes:
+The Laravel app uses hostname routes - i.e. just browsing to `http://localhost`
+will not show the site. Add the following to `/etc/hosts` so you can browse
+instead to `http://www.metafilter.test/` and see the right routes:
 
 ```
 127.0.0.1   www.metafilter.test
@@ -71,13 +81,15 @@ The Laravel app uses hostname routes - i.e. just browsing to `http://localhost` 
 
 ## Run development server
 
-Start the frontend and backend development servers using `docker compose --profile=dev-server up`.
+Start the frontend and backend development servers using
+`docker compose --profile=dev-server up`.
 
 You can also start the services individually in separate terminals with:
 - `docker compose run --rm --service-ports dev-frontend`
 - `docker compose run --rm --service-ports dev-backend`
 
-The development server should then be accessible at http://www.metafilter.test:8000/, with hot reloading on frontend changes.
+The development server should then be accessible at
+http://www.metafilter.test:8000/, with hot reloading on frontend changes.
 
 
 ## Create an admin account
@@ -96,6 +108,43 @@ The `AdminSeeder` can import an account from JSON and assign it the `moderator` 
 ]
 ```
 
-Then, run the seeder using `docker compose run --rm artisan mefi:run-admin-seeder`.
+Then, run the seeder using
+`docker compose run --rm artisan mefi:run-admin-seeder`.
 
-After logging in with an admin account, you should be able to browse to http://www.metafilter.test/admin and see the admin screens.
+After logging in with an admin account, you should be able to browse to
+http://www.metafilter.test/admin and see the admin screens.
+
+## Debugging
+
+The php container is configured with XDebug to connect to port 9003 on the host
+machine (via host.docker.internal).
+
+To adjust settings, edit the `docker/php/conf.d/xdebug.ini` and rebuild the
+images with `docker compose build` before re-running
+`docker compose --profile=dev-server up`.
+
+There is an xdebug extension for VS Code available in the marketplace with
+identifier `xdebug.php-debug` that can be used with a launch configuration in
+`.vscode/launch.json` to listen for XDebug connections. When running,
+breakpoints set in VSCode should be hit when refreshing a page generated by the
+development server.
+
+```
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for Xdebug",
+      "type": "php",
+      "request": "launch",
+      "port": 9003,
+      "pathMappings": {
+        "/var/www/html": "${workspaceFolder}"
+      }
+    }
+  ]
+}
+```
