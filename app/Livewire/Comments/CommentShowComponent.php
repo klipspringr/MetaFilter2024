@@ -29,13 +29,11 @@ final class CommentShowComponent extends Component
     public bool $userFavorited = false;
     public bool $userFlagged = false;
     public bool $userWatching = false;
-    public int $wordCount = 0;
 
     public function mount(Comment $comment): void
     {
         $this->authorizedUserId = $this->getAuthorizedUserId();
         $this->comment = $comment;
-        $this->wordCount = str_word_count($comment->body);
     }
 
     public function render(): View

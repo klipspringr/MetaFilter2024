@@ -26,7 +26,6 @@ final class CommentComponent extends Component
     public int $flagCount = 0;
     public string $flagIconFilename = 'flag';
     public string $flagButtonText = '';
-    public int $wordCount = 0;
     public bool $userFlagged = false;
 
     // State
@@ -49,8 +48,6 @@ final class CommentComponent extends Component
         $this->post = $post;
 
         $this->body = $comment->body;
-
-        $this->wordCount = str_word_count($comment->body);
 
         $this->user = auth()->user() ?? null;
 
@@ -98,7 +95,6 @@ final class CommentComponent extends Component
     {
         $this->reset([
             'body',
-            'wordCount',
         ]);
 
         $this->stopEditing();
