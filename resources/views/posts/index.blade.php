@@ -16,11 +16,7 @@
             <x-members.happy-birthday-component />
         @endauth
     @endif
-
-    @auth
-        <x-buttons.new-post-button />
-    @endauth
-
+    
     @guest
         @include('posts.partials.show-not-logged-in', [
             'context' => 'index'

@@ -78,8 +78,8 @@ small.smallest {
     font-size: var(--font-size-normal);
 }
 
-.main-contents h2{
-    font-size: var(--font-size-plus-1);
+.main-contents h2 {
+    font-size: var(--font-size-plus-2);
 }
 
 .main-contents h1,
@@ -162,7 +162,9 @@ h4 {
 }
 
 body,
-h2, h3, h4,
+h2,
+h3,
+h4,
 .notification,
 nav.post-navigation a,
 nav.secondary-navigation a,
@@ -221,4 +223,3 @@ th,
 .icon-comment-empty {
     display: inline-block;
 }
-
