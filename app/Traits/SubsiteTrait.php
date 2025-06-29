@@ -157,9 +157,9 @@ trait SubsiteTrait
         };
     }
 
-    public function getShowPostRouteName(): string
+    public function getShowPostRouteName(?string $subdomain = null): string
     {
-        $subdomain = $this->getSubdomain();
+        $subdomain ??= $this->getSubdomain();
 
         return match ($subdomain) {
             'ask' => 'ask.posts.show',

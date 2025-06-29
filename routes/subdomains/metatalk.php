@@ -35,7 +35,8 @@ Route::controller(PostController::class)->group(function () {
     Route::get('', 'index')
         ->name('metatalk.posts.index');
 
-    Route::get('{post}/{slug}', 'show')
+    Route::get('{post}/{slug?}', 'show')
+        ->whereNumber('post')
         ->name('metatalk.posts.show');
 
     Route::middleware('auth')->group(function () {

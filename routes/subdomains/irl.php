@@ -15,7 +15,8 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'index')
             ->name(RouteNameEnum::IrlMyPostsIndex);
 
-        Route::get('{post}/{slug}', 'show')
+        Route::get('{post}/{slug?}', 'show')
+            ->whereNumber('post')
             ->name(RouteNameEnum::IrlMyPostsShow);
     });
 });
@@ -33,7 +34,8 @@ Route::controller(PostController::class)->group(function () {
     Route::get('', 'index')
         ->name('irl.posts.index');
 
-    Route::get('{post}/{slug}', 'show')
+    Route::get('{post}/{slug?}', 'show')
+        ->whereNumber('post')
         ->name('irl.posts.show');
 
     Route::middleware('auth')->group(function () {
