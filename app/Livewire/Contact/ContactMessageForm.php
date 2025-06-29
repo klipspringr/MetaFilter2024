@@ -11,6 +11,6 @@ final class ContactMessageForm extends Form
 {
     protected function rules(): array
     {
-        return new StoreContactMessageRequest()->rules();
+        return (new StoreContactMessageRequest())->rules();
     }
 }
