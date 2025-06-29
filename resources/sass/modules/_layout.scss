@@ -139,6 +139,11 @@ body {
 
 .search-and-contact {
     max-width: 25%;
+    text-align: center;
+}
+
+.search-and-contact a.cta-button {
+    margin-inline: auto;
 }
 
 .site-banner {
@@ -168,7 +173,7 @@ body {
     .global-footer .container {
         display: flex;
         flex-direction: row;
-        justify-content: space-evenly;
+        justify-content: space-between;
     }
 
     #global-navigation-toggle,
