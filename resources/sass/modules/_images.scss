@@ -22,7 +22,8 @@ figure a:hover {
     color: inherit;
 }
 
-.icon img {
+.icon img,
+.icon svg {
     display: inline-flex;
     width: 1rem;
     height: 1rem;
@@ -32,23 +33,27 @@ figure a:hover {
     color: currentColor;
 }
 
-.icon.icon-big img {
+.icon.icon-big img,
+.icon.icon-big svg {
     width: 1.25rem;
     height: 1.25rem;
 }
 
-.icon.icon-bigger img {
+.icon.icon-bigger img,
+.icon.icon-bigger svg {
     width: 1.5rem;
     height: 1.5rem;
 }
 
-.icon.icon-small img {
+.icon.icon-small img,
+.icon.icon-small svg {
     width: 0.75rem;
     height: 0.75rem;
     bottom: 0;
 }
 
-.icon.icon-smaller img {
+.icon.icon-smaller img,
+.icon.icon-smaller svg {
     width: 0.5rem;
     height: 0.5rem;
 }

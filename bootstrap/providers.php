@@ -8,6 +8,7 @@ use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\FortifyServiceProvider;
 use App\Providers\HorizonServiceProvider;
 use App\Providers\RepositoryServiceProvider;
+use App\Providers\SvgIconServiceProvider;
 use App\Providers\TelescopeServiceProvider;
 use App\Providers\ViewComposerServiceProvider;
 
@@ -18,6 +19,7 @@ return [
     FortifyServiceProvider::class,
     HorizonServiceProvider::class,
     RepositoryServiceProvider::class,
+    SvgIconServiceProvider::class,
     TelescopeServiceProvider::class,
     ViewComposerServiceProvider::class,
 ];
