@@ -1,4 +1,3 @@
-
 //noinspection CssInvalidFunction // PHPStorm is a harsh mistress
 body {
     color: light-dark(var(--black), var(--white));
@@ -25,7 +24,7 @@ body {
     background-color: light-dark(var(--very-light-gray), var(--dark-base-color));
 }
 
-.main-contents > .post {
+.main-contents>.post {
     background-color: inherit;
 }
 
@@ -54,46 +53,17 @@ h3 a:visited {
 h3 a:active,
 h3 a:hover {
     color: light-dark(var(--base-color), var(--yellow-green));
-    background-color:  light-dark(var(--base-color), var(--darker-base-color));
+    background-color: light-dark(var(--base-color), var(--darker-base-color));
 }
 
 //noinspection CssInvalidFunction
-a.top-bottom-button:link .icon,
-a.top-bottom-button:visited .icon {
-    color: light-dark(var(--dark-base-color), var(--light-base-color));
-    background-color: transparent;
-}
+.link-button {}
 
 //noinspection CssInvalidFunction
-a.top-bottom-button:active .icon,
-a.top-bottom-button:hover .icon {
-    color: light-dark(var(--dark-base-color), var(--yellow-green));
-    background-color: transparent;
-}
+.primary-button {}
 
 //noinspection CssInvalidFunction
-.comment-footer a:link .icon,
-.comment-footer a:visited .icon,
-.post-footer a:link .icon,
-.post-footer a:visited .icon {
-    color: light-dark(var(--darker-base-color), var(--lightest-base-color));
-    background-color: inherit;
-}
-
-//noinspection CssInvalidFunction
-.link-button {
-
-}
-
-//noinspection CssInvalidFunction
-.primary-button {
-
-}
-
-//noinspection CssInvalidFunction
-.secondary-button {
-
-}
+.secondary-button {}
 
 //noinspection CssInvalidFunction
 form small {
@@ -262,13 +232,6 @@ a.previous:hover .title {
 .color-scheme-toggle {
     color: light-dark(var(--base-color), var(--lightest-base-color));
     background-color: transparent;
-}
-
-//noinspection CssInvalidFunction
-.notification.is-info .icon img {
-    color: light-dark(var(--base-color), var(--base-color));
-    background-color: light-dark(var(--lightest-base-color), var(--lightest-base-color));
-    border-color: var(--darker-base-color);
 }
 
 .notification.is-info a:link,
