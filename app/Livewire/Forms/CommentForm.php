@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Forms;
 
 use App\Enums\LivewireEventEnum;
+use App\Enums\ModerationTypeEnum;
 use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Models\Comment;
 use App\Traits\AuthStatusTrait;
@@ -20,7 +21,9 @@ final class CommentForm extends Form
     public string $body = '';
     public int $postId = 0;
     public ?int $parentId = null;
+    public ?ModerationTypeEnum $moderationType = null;
     public ?object $parent = null;
+    public ?object $moderatedComment = null;
 
     public function mount(): void
     {
@@ -32,6 +35,8 @@ final class CommentForm extends Form
         $this->body = $comment->body;
         $this->postId = $comment->post_id;
         $this->parentId = $comment->parent_id;
+        $this->moderationType = $comment->moderation_type;
+        $this->moderatedComment = $comment->moderated_comment;
     }
 
     protected function rules(): array
@@ -47,6 +52,7 @@ final class CommentForm extends Form
             'body' => $this->body,
             'post_id' => $this->postId,
             'parent_id' => $this->parentId,
+            'moderation_type' => $this->moderationType,
             'user_id' => $this->authorizedUserId,
         ]);
 
@@ -65,6 +71,7 @@ final class CommentForm extends Form
 
         $this->comment->update([
             'body' => $this->body,
+            'moderation_type' => $this->moderationType,
         ]);
 
         $this->parent->isEditing = false;

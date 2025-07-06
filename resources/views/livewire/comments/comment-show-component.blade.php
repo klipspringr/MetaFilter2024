@@ -61,10 +61,7 @@
         @if ($isEditing === true)
             <livewire:comments.comment-form-component
                 wire:key="'edit-comment-' . $comment->id"
-                :authorized-user-id="$authorizedUserId"
-                :post-id="$comment->post_id"
                 :comment="$comment"
-                button-text="{{ trans('Update') }}"
                 is-editing="true"
             />
         @endif

@@ -12,6 +12,7 @@ enum LivewireEventEnum: string
     case CommentFlagged = 'comment-flagged';
     case CommentStored = 'comment-stored';
     case CommentUpdated = 'comment-updated';
+    case CommentFormStateChanged = 'comment-form-state-changed';
     case EditorUpdated = 'editor-updated';
     case EscapeKeyClicked = 'escape-key-clicked';
     case FavoriteDeleted = 'favorite-deleted';

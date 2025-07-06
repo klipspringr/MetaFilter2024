@@ -1,7 +1,5 @@
-
 summary {
     display: flex;
-    justify-content: space-between;
     cursor: pointer;
 }
 
@@ -9,23 +7,28 @@ summary::-webkit-details-marker {
     display: none;
 }
 
-summary {
+details>summary {
     list-style-type: '⬇ ';
 }
 
-details[open] > summary {
+details[open]>summary {
     list-style-type: '⬆ ';
 }
 
-summary::after {
-    content: '';
-    width: 18px;
-    height: 10px;
-    background: url('https://uploads.sitepoint.com/wp-content/uploads/2023/10/1697699669arrow.svg') no-repeat;
-    background-size: cover;
-    transition: 0.2s;
-}
+.main-sidebar {
+    details>summary {
+        justify-content: space-between;
+        color: light-dark(var(--base-color), var(--yellow-green))
+    }
 
-details[open] > summary::after {
-    transform: rotate(180deg);
+    details>summary .icon.chevron-details {
+        width: auto;
+        height: auto;
+        bottom: 0;
+        margin: 0;
+    }
+
+    details[open]>summary .chevron-details {
+        transform: rotate(180deg);
+    }
 }

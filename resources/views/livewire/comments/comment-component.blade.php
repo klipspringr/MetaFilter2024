@@ -1,59 +1,97 @@
-<article class="comment">
-    {!! $comment->body !!}
+@php
+use App\Enums\ModerationTypeEnum;
+@endphp
 
-    <footer class="comment-footer">
-        <x-members.profile-link-component :user="$comment->user"/>
+<article class="comment"
+    data-comment-id="{{ $commentId }}"
+    data-member-id="{{ $comment->user->id }}"
+>
+    @if ($moderationType === ModerationTypeEnum::Replace)
+        <livewire:comments.comment-replacement
+            wire:key="comment-replacement-{{ $replacedByCommentId ?? $commentId }}"
+            :comment-id="$commentId"
+            :comment="$comment"
+            :child-comments="$childComments"
+            :$state
+            @comment-form-state-changed="setState($event.detail.state)"
+        />
+    @elseif ($moderationType === ModerationTypeEnum::Wrap)
+        <livewire:comments.comment-wrapper
+            wire:key="comment-wrapper-{{ $wrappedByCommentId ?? $commentId }}"
+            :comment-id="$commentId"
+            :comment="$comment"
+            :child-comments="$childComments"
+            :$state
+            @comment-form-state-changed="setState($event.detail.state)"
+        />
+    @elseif ($isInitiallyBlurred)
+        <livewire:comments.comment-blur
+            wire:key="comment-blur-{{ $blurredByCommentId ?? $commentId }}"
+            :comment-id="$commentId"
+            :comment="$comment"
+            :child-comments="$childComments"
+            :$state
+            @comment-form-state-changed="setState($event.detail.state)"
+        />
+    @else
+        <livewire:comments.comment-content
+            :comment-id="$commentId"
+            :comment="$comment"
+            :child-comments="$childComments"
+            :$state
+            @comment-form-state-changed="setState($event.detail.state)"
+        />
+    @endif
 
-        @include('comments.partials.comment-timestamp', [
-            'comment' => $comment,
-        ])
-
-        @auth
-            <livewire:bookmarks.bookmark-component :model="$comment"/>
-        @endauth
-
-        <livewire:favorites.favorite-component :model="$comment"/>
-
-        @auth
-            @if ($comment->user_id === auth()->id())
-                @include('livewire.comments.partials.toggle-editing-button')
-            @endif
-            @include('livewire.comments.partials.toggle-replying-button')
-        @endauth
-
-        @include('livewire.comments.partials.toggle-flagging-button')
-    </footer>
-    {{--
-        @include('comments.partials.comment-admin-footer')
-    --}}
     @if ($isEditing === true)
         <livewire:comments.comment-form-component
-            wire:key="'edit-comment-' . $comment->id"
-            :post-id="$comment->post_id"
+            wire:key="edit-comment-{{ $commentId }}"
             :comment="$comment"
-            :is-editing="$isEditing"
-            button-text="{{ trans('Update') }}"
+            is-editing="true"
+            @comment-updated="closeForm()"
+            @comment-stored="closeForm()"
         />
     @endif
 
     @if ($isFlagging === true)
         <livewire:flags.flag-component
-            wire:key="'flagging-comment-' . $comment->id"
+            wire:key="flagging-comment-{{ $commentId }}"
+            :comment-id="$comment->id"
             :model="$comment"
             @comment-flagged="addUserFlag($event.detail.id)"
-            @comment-flag-cancelled="stopFlagging()"
+            @comment-flag-cancelled="closeForm()"
             @comment-flag-deleted="removeUserFlag($event.detail.id)"
-            @flag-loading="isFlagLoading = true"
         />
     @endif
 
     @if ($isReplying === true)
         <livewire:comments.comment-form-component
-            wire:key="'reply-to-comment-' . $comment->id"
-            :post-id="$comment->post_id"
-            :parent-id="$comment->id"
-            :is-replying="$isReplying"
-            button-text="{{ trans('Reply') }}"
+            wire:key="reply-to-comment-{{ $commentId }}"
+            :comment="$comment"
+            is-replying="true"
+            @comment-updated="closeForm()"
+            @comment-stored="closeForm()"
+        />
+    @endif
+
+    @if ($isModerating === true)
+        <livewire:comments.comment-form-component
+            wire:key="moderate-comment-{{ $commentId }}"
+            :comment="$comment"
+            is-moderating="true"
+            @comment-updated="closeForm()"
+            @comment-stored="closeForm()"
         />
     @endif
 </article>
+
+@script
+<script>
+    $js('toggleBlurred', () => {
+        $wire.isBlurred = !$wire.isBlurred;
+    });
+    $js('toggleOpen', () => {
+        $wire.isOpen = !$wire.isOpen;
+    });
+</script>
+@endscript

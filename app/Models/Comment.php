@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Enums\ModerationTypeEnum;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,6 +21,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 /**
  * @property int $id
  * @property string $body
+ * @property ModerationTypeEnum|null $moderation_type
  * @property int $parent_id
  * @property int $post_id
  * @property int $user_id
@@ -38,9 +40,14 @@ final class Comment extends BaseModel
 
     protected $fillable = [
         'body',
+        'moderation_type',
         'parent_id',
         'post_id',
         'user_id',
+    ];
+
+    protected $casts = [
+        'moderation_type' => ModerationTypeEnum::class,
     ];
 
     protected static array $marks = [
@@ -130,7 +137,6 @@ final class Comment extends BaseModel
             ownerKey: 'id',
         );
     }
-
 
     public function replies(): HasMany
     {

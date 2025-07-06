@@ -13,6 +13,8 @@ final class CommentRepository extends BaseRepository implements CommentRepositor
         'comments.id',
         'comments.body',
         'comments.post_id',
+        'comments.parent_id',
+        'comments.moderation_type',
         'comments.user_id',
         'comments.created_at',
         'comments.deleted_at',
@@ -44,6 +46,21 @@ final class CommentRepository extends BaseRepository implements CommentRepositor
         if ($latestComment !== null) {
             $query->where('comments.created_at', '>', $latestComment->created_at);
         }
+
+        $query->orderBy('comments.created_at');
+
+        return $query->get();
+    }
+
+    public function getCommentsByParentId(int $parentId): Collection
+    {
+        $query = $this->model->newQuery()
+            ->join('users', 'comments.user_id', '=', 'users.id')
+            ->select(self::COLUMNS)
+            ->with([
+                'user',
+            ])
+            ->where('comments.parent_id', '=', $parentId);
 
         $query->orderBy('comments.created_at');
 

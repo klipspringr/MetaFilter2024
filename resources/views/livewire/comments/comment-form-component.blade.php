@@ -1,9 +1,14 @@
 <form
     wire:submit.prevent="submit"
+    x-data="{
+        isBodyEditable: {{ json_encode($this->isBodyEditable) }},
+        isEditing: {{ json_encode($this->isEditing) }},
+        isModerating: {{ json_encode($this->isModerating) }},
+    }"
     @if ($isEditing === true)
-        id="edit-comment-form-{{ $comment->id }}"
+        id="edit-comment-form-{{ $commentId }}"
     @elseif ($isReplying === true)
-        id="reply-to-comment-form-{{ $comment->id }}"
+        id="reply-to-comment-form-{{ $commentId }}"
     @endif
 >
     @include('forms.partials.csrf-token')
@@ -11,36 +16,71 @@
     @include('livewire.common.partials.posting-as')
 
     <fieldset>
-        <div wire:ignore>
-            <label for="{{ $this->editorId }}" class="sr-only">
-                {{ trans('Comment') }}
+        @if ($isModerating)
+        <div class="form-group">
+            <label for="moderation-type-{{ $idSuffix }}" class="form-label">{{ trans('Moderation Type') }}</label>
+            <select 
+                wire:model.live="moderationType"
+                id="moderation-type-{{ $idSuffix }}" 
+                class="form-select">
+                <option value="">{{ trans('Select moderation action...') }}</option>
+                <option value="edit">{{ trans('Edit') }}</option>
+                <option value="remove">{{ trans('Remove') }}</option>
+                <option value="replace">{{ trans('Replace') }}</option>
+                <option value="wrap">{{ trans('Wrap') }}</option>
+                <option value="blur">{{ trans('Blur') }}</option>
+            </select>
+        </div>
+        @endif
+
+        <div class="form-group" x-show="isBodyEditable || (isModerating && $wire.moderationType === 'edit')">
+            <label for="{{ $this->bodyEditorId }}">
+                {{ trans($bodyLabel) }}
+            </label>
+
+            @if ($isBodyEditable)
+            <livewire:wysiwyg.wysiwyg-component
+                wire:key="body-editor"
+                editor-id="{{ $this->bodyEditorId }}"
+                name="body"
+                wire:model="body" />
+            @else
+                <div class="loading-indicator">
+                    <x-icons.icon-component class="loading-icon" filename="bars-rotate-fade" />
+                </div>
+            @endif
+        </div>
+
+        @if ($isModerating)
+        <div class="form-group">
+            <label for="{{ $this->messageEditorId }}">
+                {{ $messageLabel }}
             </label>
 
             <livewire:wysiwyg.wysiwyg-component
-                    editor-id="{{ $this->editorId }}"
-                    name="text"
-                    wire:model="body" />
+                wire:key="message-editor"
+                editor-id="{{ $this->messageEditorId }}"
+                name="message"
+                wire:model="message" />
+        </div>
+        @endif
 
-            <div class="level">
-                @if($isEditing === true || $isReplying === true)
-                    <button
-                        type="button"
-                        class="button secondary-button"
-                        wire:click="$parent.closeForm({{ $comment->id }})">
-                        {{ trans('Cancel') }}
-                    </button>
-                @endif
-
+        <div class="level">
+            @if($isEditing === true || $isReplying === true || $isModerating === true)
                 <button
-                    type="submit"
-                    class="button primary-button">
-                    @if (!empty($buttonText))
-                        {{ trans($buttonText) }}
-                    @else
-                        {{ trans('Add Comment') }}
-                    @endif
+                    type="button"
+                    class="button secondary-button"
+                    wire:click="$parent.closeForm({{ $commentId }})">
+                    {{ trans('Cancel') }}
                 </button>
-            </div>
+            @endif
+
+            <button
+                type="submit"
+                class="button primary-button"
+                :disabled="isModerating && !$wire.moderationType">
+                {{ $buttonText }}
+            </button>
         </div>
     </fieldset>
 </form>

@@ -48,7 +48,10 @@
     </article>
 
     <section class="comments" id="comments">
-        <livewire:comments.comment-list-component :post="$post" />
+        <livewire:comments.comment-list-component
+            wire:key="{{ $post->id }}"
+            :post-id="$post->id"
+        />
     </section>
 
     @if ($post->is_archived === false)
