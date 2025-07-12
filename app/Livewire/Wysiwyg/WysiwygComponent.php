@@ -6,13 +6,22 @@ namespace App\Livewire\Wysiwyg;
 
 use App\Enums\LivewireEventEnum;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\Modelable;
 use Livewire\Component;
 
 final class WysiwygComponent extends Component
 {
+    #[Modelable]
     public string $content = '';
+
+    #[Locked]
     public string $editorId;
+
+    #[Locked]
     public string $label;
+
+    #[Locked]
     public string $name;
 
     public function mount(string $editorId, string $content = '', string $label = '', string $name = ''): void

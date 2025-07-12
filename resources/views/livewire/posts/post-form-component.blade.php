@@ -11,6 +11,7 @@
     <div wire:ignore>
         <livewire:wysiwyg.wysiwyg-component
             editor-id="post-body"
+            wire:model="body"
         />
     </div>
 
@@ -18,6 +19,7 @@
         <livewire:wysiwyg.wysiwyg-component
             editor-id="more-inside"
             label="{{ trans('More Inside') }}"
+            wire:model="more_inside"
         />
     </div>
     <x-forms.input

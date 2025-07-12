@@ -157,6 +157,9 @@ fieldset {
     border: none;
     position: relative;
     margin: 0;
+    // Reset min-inline-size to unset - Chrome sets it to min-content, which
+    // prevents CKEditor from responding to the screen width correctly.
+    min-inline-size: unset;
     padding: 0;
 }
 

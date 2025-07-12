@@ -19,7 +19,7 @@
             <livewire:wysiwyg.wysiwyg-component
                     editor-id="{{ $this->editorId }}"
                     name="text"
-                    content="{!! $comment->body !!}" />
+                    wire:model="body" />
 
             <div class="level">
                 @if($isEditing === true || $isReplying === true)
