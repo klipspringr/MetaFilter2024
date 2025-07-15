@@ -34,7 +34,6 @@ class PostService
                 'more_inside' => $this->purifierService->clean($dto->more_inside),
                 'user_id' => $dto->user_id,
                 'subsite_id' => $dto->subsite_id,
-                'state' => $dto->state,
                 'published_at' => $dto->published_at,
                 'is_published' => $dto->is_published,
             ];
