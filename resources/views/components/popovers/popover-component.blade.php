@@ -4,7 +4,7 @@
     </button>
 
     <div id="{{ $popoverId }}" popover>
-        <x-icons.icon-component filename="info-fill" />
+        <x-icons.icon-component filename="info-circle-fill" />
 
         @if (!is_null($routeName))
             <a href="{{ route($routeName) }}">

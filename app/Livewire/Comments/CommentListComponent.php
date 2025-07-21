@@ -5,12 +5,13 @@ declare(strict_types=1);
 namespace App\Livewire\Comments;
 
 use App\Enums\LivewireEventEnum;
-use App\Models\Post;
 use App\Repositories\CommentRepositoryInterface;
 use App\Traits\AuthStatusTrait;
 use App\Traits\SubsiteTrait;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -19,32 +20,36 @@ final class CommentListComponent extends Component
     use AuthStatusTrait;
     use SubsiteTrait;
 
-    public ?int $authorizedUserId;
-    public Post $post;
-    public Collection $comments;
+    #[Locked]
+    public int $postId = 0;
+
+    #[Locked]
     public string $recordsText = 'comments';
 
     protected CommentRepositoryInterface $commentRepository;
+
     public function boot(CommentRepositoryInterface $commentRepository): void
     {
         $this->commentRepository = $commentRepository;
     }
 
-    public function mount(Post $post): void
+    public function mount(int $postId): void
     {
-        $this->authorizedUserId = $this->getAuthorizedUserId();
+        $this->postId = $postId;
 
-        $this->post = $post;
-        $this->getComments();
         $this->setRecordsLabel();
+    }
+
+    #[Computed]
+    public function comments(): Collection
+    {
+        return $this->commentRepository->getCommentsByPostId($this->postId);
     }
 
     public function render(): View
     {
-        $comments = $this->comments;
-
         return view('livewire.comments.comment-list-component', [
-            'comments' => compact('comments'),
+            'comments' => $this->comments,
         ]);
     }
 
@@ -55,7 +60,7 @@ final class CommentListComponent extends Component
     ])]
     public function getComments(): void
     {
-        $this->comments = $this->commentRepository->getCommentsByPostId($this->post->id);
+        unset($this->comments);
     }
 
     private function setRecordsLabel(): void

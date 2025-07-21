@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Livewire\Comments;
 
+use App\Enums\CommentStateEnum;
 use App\Enums\LivewireEventEnum;
+use App\Enums\ModerationTypeEnum;
 use App\Models\Comment;
-use App\Models\Flag;
-use App\Models\Post;
-use App\Models\User;
 use App\Traits\CommentComponentTrait;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -19,106 +19,108 @@ final class CommentComponent extends Component
 {
     use CommentComponentTrait;
 
-    // Data
-    public ?int $authorizedUserId;
-    public string $body = '';
-    public ?int $parentId = null;
-    public int $flagCount = 0;
-    public string $flagIconFilename = 'flag';
-    public string $flagButtonText = '';
-    public bool $userFlagged = false;
-
     // State
-    public bool $isEditing = false;
-    public bool $isFlagging = false;
-    public bool $isReplying = false;
+    public CommentStateEnum $state = CommentStateEnum::Viewing;
 
-    public Comment $comment;
-    public CommentForm $commentForm;
-    public Post $post;
-    public ?User $user;
-
-    public function mount(Comment $comment, Post $post): void
+    #[Computed]
+    public function isInitiallyBlurred(): bool
     {
-        $this->authorizedUserId = auth()->id() ?? null;
+        return $this->moderatorCommentsByType?->get(ModerationTypeEnum::Blur->value) !== null;
+    }
 
-        $this->comment = $comment;
-        $this->commentForm->setComment($comment);
+    public function mount(int $commentId, ?Comment $comment, ?Collection $childComments): void
+    {
+        // On mount we expect the comment list to provide the comment model
+        // and the moderator comments collection.
+        $this->commentId = $commentId;
+        $this->comment = $comment ?? Comment::find($commentId);
+        $this->childComments = $childComments;
 
-        $this->post = $post;
-
-        $this->body = $comment->body;
-
-        $this->user = auth()->user() ?? null;
-
-        $this->updateFlagCount();
-        $this->hasUserFlagged();
-
-        $this->flagIconFilename = $this->getFlagIconFilename();
-        $this->flagButtonText = $this->getFlagTitleText();
+        // Decide whether to blur the component initially.
+        $this->isBlurred = $this->isInitiallyBlurred;
     }
 
     public function render(): View
     {
-        return view('livewire.comments.comment-component');
-    }
+        // If the comment has been replaced, just render the moderation message.
+        // TODO: if it is possible to have a top-level comment be marked with a
+        // moderation type, we may want to render it via this view. But it may
+        // also just be about changing the border for a regular rendering.
+        $moderatorReplaceComment = $this->moderatorCommentsByType?->get(ModerationTypeEnum::Replace->value);
+        $moderatorWrapComment = $this->moderatorCommentsByType?->get(ModerationTypeEnum::Wrap->value);
+        $moderatorBlurComment = $this->moderatorCommentsByType?->get(ModerationTypeEnum::Blur->value);
+        $moderationType = null;
 
-    private function getFlagIconFilename(): string
-    {
-        return $this->userFlagged ? 'flag-fill' : 'flag';
-    }
+        if ($moderatorReplaceComment !== null &&
+            ($moderatorWrapComment === null || $moderatorReplaceComment->created_at > $moderatorWrapComment->created_at)) {
+            $moderationType = ModerationTypeEnum::Replace;
+        } elseif ($moderatorWrapComment !== null) {
+            $moderationType = ModerationTypeEnum::Wrap;
+        }
 
-    private function getFlagTitleText(): string
-    {
-        return $this->userFlagged ? trans('Remove flag') : trans('Flag this comment');
-    }
-
-    private function hasUserFlagged(): void
-    {
-        $userFlagCount = DB::table(table: 'markable_flags')
-            ->where(column: 'user_id', operator: '=', value: auth()->id())
-            ->where(column: 'markable_id', operator: '=', value: $this->comment->id)
-            ->where(column: 'markable_type', operator: 'LIKE', value: '%Comment%')
-            ->count();
-
-        $this->userFlagged = $userFlagCount > 0;
+        // If there are no decorations to apply, just render the basic comment component.
+        return view('livewire.comments.comment-component', [
+            'comment' => $this->comment,
+            'childComments' => $this->childComments,
+            'moderationType' => $moderationType,
+            'isInitiallyBlurred' => $this->isInitiallyBlurred,
+            'replacedByCommentId' => $moderatorReplaceComment?->id,
+            'wrappedByCommentId' => $moderatorWrapComment?->id,
+            'blurredByCommentId' => $moderatorBlurComment?->id,
+            'isEditing' => $this->state === CommentStateEnum::Editing,
+            'isFlagging' => $this->state === CommentStateEnum::Flagging,
+            'isReplying' => $this->state === CommentStateEnum::Replying,
+            'isModerating' => $this->state === CommentStateEnum::Moderating,
+        ]);
     }
 
     #[On([
-        LivewireEventEnum::CommentStored->value,
-        LivewireEventEnum::CommentDeleted->value,
-        LivewireEventEnum::CommentFlagged->value,
-        LivewireEventEnum::CommentUpdated->value,
         LivewireEventEnum::EscapeKeyClicked->value,
     ])]
     public function closeForm(): void
     {
-        $this->reset([
-            'body',
-        ]);
-
-        $this->stopEditing();
-        $this->stopFlagging();
-        $this->stopReplying();
+        $this->state = CommentStateEnum::Viewing;
     }
 
-    private function updateFlagCount(): void
+    #[On([
+        LivewireEventEnum::CommentStored->value,
+        LivewireEventEnum::CommentUpdated->value,
+    ])]
+    public function reloadChildComments(int $id, ?int $parentId): void
     {
-        $this->flagCount = Flag::count($this->comment);
+        if ($parentId === $this->commentId) {
+            $this->childComments = $this->commentRepository->getCommentsByParentId($parentId);
+            unset($this->moderatorCommentsByType, $this->isInitiallyBlurred);
+
+            // Re-evaluate whether the comment should be blurred.
+            $this->isBlurred = $this->isInitiallyBlurred;
+        }
     }
 
-    #[On('comment-flagged.{comment.id}')]
-    public function addUserFlag(): void
+    public function setState(CommentStateEnum $state): void
     {
-        \Log::debug('CommentComponent::addUserFlag');
-        $this->userFlagged = true;
-        $this->flagCount++;
+        $this->state = $state;
     }
 
-    #[On('comment-flag-deleted.{comment.id}')]
-    public function removeUserFlag(): void
+    public function addUserFlag(int $id): void
     {
-        $this->userFlagged = false;
-        $this->flagCount--;
+        if ($id !== $this->comment->id) {
+            return;
+        }
+
+        unset($this->userFlagged, $this->flagCount);
+
+        $this->state = CommentStateEnum::Viewing;
+    }
+
+    public function removeUserFlag(int $id): void
+    {
+        if ($id !== $this->comment->id) {
+            return;
+        }
+
+        unset($this->userFlagged, $this->flagCount);
+
+        $this->state = CommentStateEnum::Viewing;
     }
 }

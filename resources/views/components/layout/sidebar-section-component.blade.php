@@ -6,6 +6,7 @@
     @endif
         <summary>
             <h3>{{  trans($heading) }}</h3>
+            <x-icons.icon-component class="chevron-details" filename="chevron-details"/>
         </summary>
 
         {{ $slot }}

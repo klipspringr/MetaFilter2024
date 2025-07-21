@@ -1,7 +1,119 @@
-
-.comment,
 .post {
-    margin: 0 0 2rem 0;
+    position: relative;
     padding: 0.75rem;
     border-radius: 0.25rem;
+    margin-bottom: 2rem;
+}
+
+.comments {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.comment {
+    position: relative;
+    border-radius: 0.25rem;
+}
+
+.comment>.moderator-replaced,
+.comment>.moderator-hidden>summary,
+.comment .comment-container {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+}
+
+.comment .blur-container {
+    border-radius: 0.25rem;
+}
+
+.comment-footer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.comment-metadata {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.comment-metadata>time {
+    display: inline-flex;
+    gap: 1rem;
+}
+
+.moderator-message {
+    border: 1px solid light-dark(var(--base-color), var(--yellow-green));
+    color: light-dark(var(--base-color), var(--yellow-green));
+}
+
+details.moderator-hidden {
+    padding: 0;
+    border-radius: inherit;
+
+    &>summary {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+
+        border-radius: inherit;
+    }
+
+    &[open]>summary {
+        margin-bottom: 0.5rem;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    &>summary>footer.comment-controls:before {
+        display: block;
+        content: '▶︎';
+        width: 1rem;
+        height: auto;
+    }
+
+    &[open]>summary>footer.comment-controls:before {
+        content: '▼';
+    }
+
+    &>summary>main+footer,
+    &>summary>footer+footer {
+        margin-top: 0.5rem;
+    }
+
+    &>summary>footer.comment-controls {
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+    }
+
+    &>summary>footer.comment-controls>span.show-comment,
+    &[open]>summary>footer.comment-controls>span.hide-comment {
+        display: block;
+    }
+
+    &>summary>footer.comment-controls>span.hide-comment,
+    &[open]>summary>footer.comment-controls>span.show-comment {
+        display: none;
+    }
+}
+
+.button:not(.loading)>span.icon:not(.loading-icon) {
+    display: inline;
+}
+
+.button:not(.loading)>span.icon.loading-icon {
+    display: none;
+}
+
+.button.loading>span.icon:not(.loading-icon) {
+    display: none;
+}
+
+.button.loading>span.icon.loading-icon {
+    display: inline;
 }

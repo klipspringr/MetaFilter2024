@@ -35,7 +35,7 @@ export default defineConfig({
     server: {
         host: serverHost,
         allowedHosts,
-        hmr: { host: serverHost },
+        hmr: { host: appHost },
         cors: true,
         strictPort: true,
         port: serverPort,

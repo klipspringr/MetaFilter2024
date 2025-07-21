@@ -1,6 +1,6 @@
 <footer class="comment-footer">
     <div class="level">
-        <div>
+        <div class="comment-metadata">
             <address>
                 <x-members.profile-link-component :user="$comment->user" />
             </address>

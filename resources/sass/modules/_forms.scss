@@ -19,7 +19,7 @@ main input[type='url'] {
 }
 
 textarea.comment-textarea {
-    resize: block;
+    resize: vertical;
 }
 
 input[type='radio'] {
@@ -60,6 +60,12 @@ input[type='radio']:focus {
     min-height: 10rem;
 }
 
+label.radio-button-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .radio-button-label:focus-within {
     color: var(--dark-base-color);
 }
@@ -68,8 +74,20 @@ input[type='radio']:focus {
     margin: 0 0 1rem 0;
 }
 
-.fantastic {
+.flag-form fieldset legend {
     margin-bottom: 1rem;
+}
+
+.flag-form label:has(input[type='radio']) {
+    margin-bottom: 0.5rem;
+}
+
+.flag-form label:has(input[type='radio'].flag-reason-fantastic) {
+    margin-bottom: 1rem;
+}
+
+.flag-form textarea.flag-note {
+    resize: vertical;
 }
 
 .input-icon-wrap {

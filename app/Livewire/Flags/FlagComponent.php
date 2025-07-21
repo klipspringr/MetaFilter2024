@@ -11,8 +11,8 @@ use App\Models\Post;
 use App\Traits\AuthStatusTrait;
 use App\Traits\LoggingTrait;
 use App\Traits\TypeTrait;
-use Exception;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Locked;
 use Livewire\Component;
 use Maize\Markable\Exceptions\InvalidMarkValueException;
 
@@ -26,25 +26,42 @@ final class FlagComponent extends Component
     private const string MODEL_PATH = 'app\\models\\';
 
     public Comment|Post $model;
-    public int $flagCount = 0;
-    public string $iconFilename = 'flag';
-    public string $note = '';
-    public array $flagReasons = [];
-    public string $selectedReason = '';
-    public bool $showForm = false;
-    public bool $showNoteField = false;
-    public string $titleText;
+    public Flag|null $userFlag = null;
+
+    #[Locked]
+    public int $modelId;
+    #[Locked]
     public string $type;
-    public bool $userFlagged = false;
+    #[Locked]
+    public int $flagCount = 0;
+    #[Locked]
+    public string $iconFilename = 'flag';
+    #[Locked]
+    public string $titleText;
+    #[Locked]
+    public array $flagReasons = [];
+
+    // Actual values we interact with
+    public string $note = '';
+    public string $selectedReason = '';
+    public bool $showNoteField = false;
+    public bool $formClosed = false;
 
     public function mount(
         Comment|Post $model,
     ): void {
         $configReasons = config('markable.allowed_values.flag', []);
-        $this->flagReasons = is_array($configReasons) ? $configReasons : [];
 
+        $this->flagReasons = is_array($configReasons) ? array_combine(
+            array_map(fn($reason) => mb_strtolower(preg_replace('/[^\w]+/', '-', $reason)), $configReasons),
+            $configReasons,
+        ) : [];
+
+        $this->formClosed = false;
         $this->model = $model;
+        $this->modelId = $model->id;
         $this->type = $this->getType();
+        $this->userFlag = $this->getUserFlag();
         $this->updateFlagData();
     }
 
@@ -53,77 +70,98 @@ final class FlagComponent extends Component
         return view('livewire.flags.flag-component');
     }
 
-    public function flagReasonSelected(string $selectedReason): void
+    public function isNoteVisibleForReason(string $reason): bool
     {
-        if ($selectedReason === self::FLAG_WITH_NOTE) {
-            $this->showNoteField = true;
-        } else {
-            $this->showNoteField = false;
-            $this->reset('note');
-        }
-
-        $this->selectedReason = $selectedReason;
+        return $reason === self::FLAG_WITH_NOTE;
     }
 
-    public function updateFlagData(): void
+    public function getUserFlag(): Flag | null
     {
+        return Flag::where([
+            'user_id' => auth()->id(),
+            'markable_id' => $this->model->getKey(),
+            'markable_type' => $this->model->getMorphClass(),
+        ])->first();
+    }
+
+    protected function updateFlagData(): void
+    {
+        $value = $this->userFlag?->value ?? '';
+        $this->selectedReason = in_array($value, $this->flagReasons) ? $value : '';
+        $this->note = $this->userFlag?->metadata['note'] ?? '';
+        $this->showNoteField = $this->isNoteVisibleForReason($this->selectedReason);
         $this->setTitleText();
+    }
+
+    protected function deleteUserFlag(): void
+    {
+        Flag::where([
+            'user_id' => auth()->id(),
+            'markable_id' => $this->model->getKey(),
+            'markable_type' => $this->model->getMorphClass(),
+        ])->get()->each->delete();
     }
 
     public function store(): void
     {
-        //        $rules = (new StoreFlagRequest())->rules();
-
-        //        $this->validate($rules);
         $metadata = [];
 
         $selectedReason = mb_trim($this->selectedReason);
+        $noteText = mb_trim($this->note);
 
+        if ($this->isNoteVisibleForReason($selectedReason) && mb_strlen($noteText) > 0) {
+            $metadata = ['note' => $noteText];
+        }
+
+        // Just cancel the change if the form is unmodified
+        if ($selectedReason === ($this->userFlag?->value ?? '') && $metadata === $this->userFlag?->metadata) {
+            $this->cancel();
+            return;
+        }
+
+        $event = $this->type === 'comment' ?
+            LivewireEventEnum::CommentFlagged :
+            LivewireEventEnum::PostFlagged;
+
+        // Stop rendering while we are modifying data
+        $this->formClosed = true;
+
+        $this->deleteUserFlag();
         try {
-            if ($selectedReason === self::FLAG_WITH_NOTE && mb_strlen($this->note) > 0) {
-                $metadata = ['note' => $this->note];
-            }
-
-            $event = $this->type === 'comment' ?
-                LivewireEventEnum::CommentFlagged->value :
-                LivewireEventEnum::PostFlagged->value;
-
-            $this->dispatchEvent($event);
-
-            Flag::add($this->model, auth()->user(), $selectedReason, $metadata);
-
-            $this->showForm = false;
-
-            $this->userFlagged = false;
-
-            $this->updateFlagData();
+            $this->userFlag = Flag::add($this->model, auth()->user(), $selectedReason, $metadata);
         } catch (InvalidMarkValueException $exception) {
             $this->logError($exception);
         }
+        $this->updateFlagData();
+
+        $this->dispatchEvent($event);
     }
 
     public function delete(): void
     {
-        try {
-            $event = $this->type === 'comment' ?
-                LivewireEventEnum::CommentFlagDeleted->value :
-                LivewireEventEnum::PostFlagDeleted->value;
 
-            $this->dispatchEvent($event);
+        // Stop rendering while we are modifying data
+        $this->formClosed = true;
+        $event = $this->type === 'comment' ?
+            LivewireEventEnum::CommentFlagDeleted :
+            LivewireEventEnum::PostFlagDeleted;
 
-            Flag::remove($this->model, auth()->user());
+        $this->deleteUserFlag();
+        $this->userFlag = null;
+        $this->updateFlagData();
 
-            $this->userFlagged = false;
-
-            $this->updateFlagData();
-        } catch (Exception $exception) {
-            $this->logError($exception);
-        }
+        $this->dispatchEvent($event);
     }
 
-    public function toggleForm(): void
+    public function cancel(): void
     {
-        $this->showForm = !$this->showForm;
+        $this->formClosed = true;
+
+        $event = $this->type === 'comment' ?
+            LivewireEventEnum::CommentFlagCancelled :
+            LivewireEventEnum::PostFlagCancelled;
+
+        $this->dispatchEvent($event);
     }
 
     private function getType(): string
@@ -137,11 +175,11 @@ final class FlagComponent extends Component
     {
         $flagText = 'Flag this ' . $this->type;
 
-        $this->titleText = $this->userFlagged ? trans('Remove flag') : trans($flagText);
+        $this->titleText = $this->userFlag ? trans('Remove or edit flag') : trans($flagText);
     }
 
-    private function dispatchEvent(string $event): void
+    private function dispatchEvent(LivewireEventEnum $event): void
     {
-        $this->dispatch($event, id: $this->model->id);
+        $this->dispatch($event->value, id: $this->model->id);
     }
 }
