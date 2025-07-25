@@ -24,6 +24,10 @@ body {
     background-color: light-dark(var(--very-light-gray), var(--dark-base-color));
 }
 
+.comment:has(>.moderator-removed) {
+    background-color: inherit;
+}
+
 .main-contents>.post {
     background-color: inherit;
 }

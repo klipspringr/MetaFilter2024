@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Enums\RoleNameEnum;
 use App\Traits\LoggingTrait;
 use App\Traits\SubsiteTrait;
 use App\Traits\UrlTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -30,6 +32,9 @@ final class AppServiceProvider extends ServiceProvider
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $exception) {
             $this->logError($exception);
         }
+        Blade::if('moderator', function () {
+            return auth()?->user()?->hasRole(RoleNameEnum::MODERATOR->value);
+        });
 
         Model::shouldBeStrict();
 

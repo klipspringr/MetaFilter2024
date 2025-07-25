@@ -17,6 +17,11 @@
     border-radius: 0.25rem;
 }
 
+.comment.moderator-removed {
+    display: none;
+}
+
+.comment>.moderator-removed,
 .comment>.moderator-replaced,
 .comment>.moderator-hidden>summary,
 .comment .comment-container {
@@ -48,7 +53,14 @@
 
 .moderator-message {
     border: 1px solid light-dark(var(--base-color), var(--yellow-green));
+}
+
+.moderator-message:not(.moderator-removed) .moderator-content {
     color: light-dark(var(--base-color), var(--yellow-green));
+}
+
+.moderator-message.moderator-removed {
+    border: 1px solid var(--is-danger);
 }
 
 details.moderator-hidden {

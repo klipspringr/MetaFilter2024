@@ -119,11 +119,13 @@ final class CommentFormComponent extends Component
         if ($this->isModerating) {
             $data['bodyLabel'] = trans('Original comment');
             $data['buttonText'] = trans(match ($this->moderationType) {
+                ModerationTypeEnum::Comment => 'Comment as moderator',
                 ModerationTypeEnum::Edit => 'Edit comment',
-                ModerationTypeEnum::Remove => 'Remove comment',
-                ModerationTypeEnum::Replace => 'Replace comment',
-                ModerationTypeEnum::Wrap => 'Wrap comment',
                 ModerationTypeEnum::Blur => 'Blur comment',
+                ModerationTypeEnum::Wrap => 'Wrap comment',
+                ModerationTypeEnum::Replace => 'Replace comment',
+                ModerationTypeEnum::Remove => 'Remove comment',
+                ModerationTypeEnum::Restore => 'Restore comment',
                 default => 'Moderate',
             });
         } elseif ($this->isReplying) {

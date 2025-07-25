@@ -36,20 +36,58 @@ trait CommentComponentTrait
         return $this->comment?->userFlagged() ?? false;
     }
 
+    /**
+     * Finds the most recent moderator remove, replace, or wrap comment.
+     *
+     * The effect of Reset is to override any previous appearance-modifying comment
+     * and restore the default appearance for the original comment.
+     */
     #[Computed]
-    public function moderatorCommentsByType(): ?Collection
+    public function appearanceComment(): ?Comment
     {
-        return $this->childComments?->filter(
-            fn($comment) =>
-            $comment->moderation_type !== null &&
-            $comment->moderation_type->value !== ModerationTypeEnum::Comment->value,
-        )->keyBy(fn($comment) => $comment->moderation_type->value ?? 'none');
+        $appearanceComment = $this->childComments?->last(
+            fn($comment) => $comment->moderation_type !== null && match ($comment->moderation_type) {
+                ModerationTypeEnum::Remove, ModerationTypeEnum::Replace, ModerationTypeEnum::Wrap, ModerationTypeEnum::Restore => true,
+                default => false,
+            },
+        );
+
+        // If the last appearance-modifying comment is a Restore, return null.
+        if ($appearanceComment && $appearanceComment->moderation_type === ModerationTypeEnum::Restore) {
+            return null;
+        }
+
+        return $appearanceComment;
+    }
+
+    /**
+     * Finds the most recent moderator blur comment.
+     *
+     * Blurring of comments can coexist with wrapping, but not with removal or replacement.
+     * It is also reset by a later Restore comment.
+     */
+    #[Computed]
+    public function blurComment(): ?Comment
+    {
+        $blurComment = $this->childComments?->last(
+            fn($comment) => $comment->moderation_type !== null && match ($comment->moderation_type) {
+                ModerationTypeEnum::Blur, ModerationTypeEnum::Remove, ModerationTypeEnum::Replace, ModerationTypeEnum::Restore => true,
+                default => false,
+            },
+        );
+
+        // If the last blur-modifying comment is not a Blur, return null.
+        if ($blurComment && $blurComment->moderation_type !== ModerationTypeEnum::Blur) {
+            return null;
+        }
+
+        return $blurComment;
     }
 
     #[Computed]
     public function isInitiallyBlurred(): bool
     {
-        return $this->moderatorCommentsByType?->get(ModerationTypeEnum::Blur->value) !== null;
+        return $this->blurComment !== null;
     }
 
     protected CommentRepositoryInterface $commentRepository;

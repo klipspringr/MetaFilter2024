@@ -11,6 +11,7 @@ enum ModerationTypeEnum: string
     case Edit = 'edit';
     case Remove = 'remove';
     case Replace = 'replace';
+    case Restore = 'restore';
     case Wrap = 'wrap';
 
     public function label(): string
@@ -21,6 +22,7 @@ enum ModerationTypeEnum: string
             self::Edit => 'Edit',
             self::Remove => 'Remove',
             self::Replace => 'Replace',
+            self::Restore => 'Restore',
             self::Wrap => 'Wrap',
         };
     }
