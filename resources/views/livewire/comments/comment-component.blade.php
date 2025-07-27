@@ -2,13 +2,26 @@
 use App\Enums\ModerationTypeEnum;
 @endphp
 
-<article class="comment"
+<article class="comment @if ($isRemoved) moderator-removed @endif"
     data-comment-id="{{ $commentId }}"
-    data-member-id="{{ $comment->user->id }}"
+    @if (!$isRemoved)
+        data-member-id="{{ $comment->user->id }}"
+    @endif
 >
-    @if ($moderationType === ModerationTypeEnum::Replace)
+    @if ($moderationType === ModerationTypeEnum::Remove)
+        @moderator
+            <livewire:comments.comment-removal
+                wire:key="comment-removal-{{ $appearanceCommentId ?? $commentId }}"
+                :comment-id="$commentId"
+                :comment="$comment"
+                :child-comments="$childComments"
+                :$state
+                @comment-form-state-changed="setState($event.detail.state)"
+            />
+        @endmoderator
+    @elseif ($moderationType === ModerationTypeEnum::Replace)
         <livewire:comments.comment-replacement
-            wire:key="comment-replacement-{{ $replacedByCommentId ?? $commentId }}"
+            wire:key="comment-replacement-{{ $appearanceCommentId ?? $commentId }}"
             :comment-id="$commentId"
             :comment="$comment"
             :child-comments="$childComments"
@@ -17,16 +30,7 @@ use App\Enums\ModerationTypeEnum;
         />
     @elseif ($moderationType === ModerationTypeEnum::Wrap)
         <livewire:comments.comment-wrapper
-            wire:key="comment-wrapper-{{ $wrappedByCommentId ?? $commentId }}"
-            :comment-id="$commentId"
-            :comment="$comment"
-            :child-comments="$childComments"
-            :$state
-            @comment-form-state-changed="setState($event.detail.state)"
-        />
-    @elseif ($isInitiallyBlurred)
-        <livewire:comments.comment-blur
-            wire:key="comment-blur-{{ $blurredByCommentId ?? $commentId }}"
+            wire:key="comment-wrapper-{{ $appearanceCommentId ?? $commentId }}"
             :comment-id="$commentId"
             :comment="$comment"
             :child-comments="$childComments"
@@ -34,13 +38,24 @@ use App\Enums\ModerationTypeEnum;
             @comment-form-state-changed="setState($event.detail.state)"
         />
     @else
-        <livewire:comments.comment-content
-            :comment-id="$commentId"
-            :comment="$comment"
-            :child-comments="$childComments"
-            :$state
-            @comment-form-state-changed="setState($event.detail.state)"
-        />
+        @if ($isInitiallyBlurred)
+            <livewire:comments.comment-blur
+                wire:key="comment-blur-{{ $blurCommentId ?? $commentId }}"
+                :comment-id="$commentId"
+                :comment="$comment"
+                :child-comments="$childComments"
+                :$state
+                @comment-form-state-changed="setState($event.detail.state)"
+            />
+        @else
+            <livewire:comments.comment-content
+                :comment-id="$commentId"
+                :comment="$comment"
+                :child-comments="$childComments"
+                :$state
+                @comment-form-state-changed="setState($event.detail.state)"
+            />
+        @endif
     @endif
 
     @if ($isEditing === true)
@@ -84,14 +99,3 @@ use App\Enums\ModerationTypeEnum;
         />
     @endif
 </article>
-
-@script
-<script>
-    $js('toggleBlurred', () => {
-        $wire.isBlurred = !$wire.isBlurred;
-    });
-    $js('toggleOpen', () => {
-        $wire.isOpen = !$wire.isOpen;
-    });
-</script>
-@endscript

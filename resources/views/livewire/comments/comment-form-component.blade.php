@@ -24,11 +24,13 @@
                 id="moderation-type-{{ $idSuffix }}" 
                 class="form-select">
                 <option value="">{{ trans('Select moderation action...') }}</option>
+                <option value="comment">{{ trans('Comment') }}</option>
                 <option value="edit">{{ trans('Edit') }}</option>
-                <option value="remove">{{ trans('Remove') }}</option>
-                <option value="replace">{{ trans('Replace') }}</option>
-                <option value="wrap">{{ trans('Wrap') }}</option>
                 <option value="blur">{{ trans('Blur') }}</option>
+                <option value="wrap">{{ trans('Wrap') }}</option>
+                <option value="replace">{{ trans('Replace') }}</option>
+                <option value="remove">{{ trans('Remove') }}</option>
+                <option value="restore">{{ trans('Restore') }}</option>
             </select>
         </div>
         @endif

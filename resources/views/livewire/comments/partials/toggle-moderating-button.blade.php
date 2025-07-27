@@ -1,3 +1,4 @@
+@moderator
 <button
     class="button footer-button"
     wire:click.prevent="toggleModerating()"
@@ -6,3 +7,4 @@
     <x-icons.icon-component filename="stoplights-fill" />
     {{ trans('Moderate') }}
 </button>
+@endmoderator

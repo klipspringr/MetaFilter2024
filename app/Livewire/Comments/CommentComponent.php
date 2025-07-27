@@ -7,11 +7,11 @@ namespace App\Livewire\Comments;
 use App\Enums\CommentStateEnum;
 use App\Enums\LivewireEventEnum;
 use App\Enums\ModerationTypeEnum;
+use App\Enums\RoleNameEnum;
 use App\Models\Comment;
 use App\Traits\CommentComponentTrait;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -21,12 +21,6 @@ final class CommentComponent extends Component
 
     // State
     public CommentStateEnum $state = CommentStateEnum::Viewing;
-
-    #[Computed]
-    public function isInitiallyBlurred(): bool
-    {
-        return $this->moderatorCommentsByType?->get(ModerationTypeEnum::Blur->value) !== null;
-    }
 
     public function mount(int $commentId, ?Comment $comment, ?Collection $childComments): void
     {
@@ -42,21 +36,7 @@ final class CommentComponent extends Component
 
     public function render(): View
     {
-        // If the comment has been replaced, just render the moderation message.
-        // TODO: if it is possible to have a top-level comment be marked with a
-        // moderation type, we may want to render it via this view. But it may
-        // also just be about changing the border for a regular rendering.
-        $moderatorReplaceComment = $this->moderatorCommentsByType?->get(ModerationTypeEnum::Replace->value);
-        $moderatorWrapComment = $this->moderatorCommentsByType?->get(ModerationTypeEnum::Wrap->value);
-        $moderatorBlurComment = $this->moderatorCommentsByType?->get(ModerationTypeEnum::Blur->value);
-        $moderationType = null;
-
-        if ($moderatorReplaceComment !== null &&
-            ($moderatorWrapComment === null || $moderatorReplaceComment->created_at > $moderatorWrapComment->created_at)) {
-            $moderationType = ModerationTypeEnum::Replace;
-        } elseif ($moderatorWrapComment !== null) {
-            $moderationType = ModerationTypeEnum::Wrap;
-        }
+        $moderationType = $this->appearanceComment?->moderation_type ?? null;
 
         // If there are no decorations to apply, just render the basic comment component.
         return view('livewire.comments.comment-component', [
@@ -64,9 +44,9 @@ final class CommentComponent extends Component
             'childComments' => $this->childComments,
             'moderationType' => $moderationType,
             'isInitiallyBlurred' => $this->isInitiallyBlurred,
-            'replacedByCommentId' => $moderatorReplaceComment?->id,
-            'wrappedByCommentId' => $moderatorWrapComment?->id,
-            'blurredByCommentId' => $moderatorBlurComment?->id,
+            'isRemoved' => $moderationType === ModerationTypeEnum::Remove && !auth()->user()?->hasRole(RoleNameEnum::MODERATOR->value),
+            'appearanceCommentId' => $this->appearanceComment?->id,
+            'blurCommentId' => $this->blurComment?->id,
             'isEditing' => $this->state === CommentStateEnum::Editing,
             'isFlagging' => $this->state === CommentStateEnum::Flagging,
             'isReplying' => $this->state === CommentStateEnum::Replying,
@@ -90,7 +70,7 @@ final class CommentComponent extends Component
     {
         if ($parentId === $this->commentId) {
             $this->childComments = $this->commentRepository->getCommentsByParentId($parentId);
-            unset($this->moderatorCommentsByType, $this->isInitiallyBlurred);
+            unset($this->appearanceComment, $this->blurComment, $this->isInitiallyBlurred);
 
             // Re-evaluate whether the comment should be blurred.
             $this->isBlurred = $this->isInitiallyBlurred;
