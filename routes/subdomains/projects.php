@@ -22,7 +22,8 @@ Route::controller(PostController::class)
         Route::get('', 'index')
             ->name('projects.posts.index');
 
-        Route::get('{post}/{slug}', 'show')
+        Route::get('{post}/{slug?}', 'show')
+            ->whereNumber('post')
             ->name('projects.posts.show');
 
         Route::middleware('auth')->group(function () {

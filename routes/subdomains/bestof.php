@@ -9,6 +9,7 @@ Route::controller(PostController::class)->group(function () {
     Route::get('', 'index')
         ->name('bestof.posts.index');
 
-    Route::get('{post}/{slug}', 'show')
+    Route::get('{post}/{slug?}', 'show')
+        ->whereNumber('post')
         ->name('bestof.posts.show');
 });

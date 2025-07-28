@@ -16,6 +16,7 @@ use App\Services\PostService;
 use App\Traits\PostTrait;
 use App\Traits\SubsiteTrait;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 final class PostController extends BaseController
 {
@@ -42,11 +43,21 @@ final class PostController extends BaseController
         ]);
     }
 
-    public function show(Post $post): View
+    public function show(Post $post, ?string $slug = null): View|RedirectResponse
     {
-        $relatedPosts = $this->postRepository->getRelatedPosts($post);
-
+        // Check if the post belongs to the correct subsite
         $subdomain = $this->getSubdomain() === 'www' ? 'metafilter' : $this->getSubdomain();
+        $postSubdomain = $post->subsite->subdomain === 'www' ? 'metafilter' : $post->subsite->subdomain;
+
+        // Redirect if subdomain or slug is incorrect
+        if ($subdomain !== $postSubdomain || $slug !== $post->slug) {
+            return redirect()->route($this->getShowPostRouteName($postSubdomain), [
+                'post' => $post,
+                'slug' => $post->slug,
+            ], 301);
+        }
+
+        $relatedPosts = $this->postRepository->getRelatedPosts($post);
 
         return view('posts.show', [
             'title' => $post->title,

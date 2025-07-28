@@ -33,7 +33,8 @@ Route::controller(PostController::class)->group(function () {
     Route::get('', 'index')
         ->name('fanfare.posts.index');
 
-    Route::get('{post}/{slug}', 'show')
+    Route::get('{post}/{slug?}', 'show')
+        ->whereNumber('post')
         ->name('fanfare.posts.show');
 
     Route::middleware('auth')->group(function () {
