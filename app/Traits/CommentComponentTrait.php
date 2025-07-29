@@ -6,7 +6,6 @@ namespace App\Traits;
 
 use App\Enums\CommentStateEnum;
 use App\Enums\LivewireEventEnum;
-use App\Enums\ModerationTypeEnum;
 use App\Models\Comment;
 use App\Repositories\CommentRepositoryInterface;
 use Illuminate\Support\Collection;
@@ -16,6 +15,8 @@ use Livewire\Attributes\On;
 
 trait CommentComponentTrait
 {
+    use ModeratorActionsTrait;
+
     // Data
     #[Locked]
     public int $commentId = 0;
@@ -45,19 +46,7 @@ trait CommentComponentTrait
     #[Computed]
     public function appearanceComment(): ?Comment
     {
-        $appearanceComment = $this->childComments?->last(
-            fn($comment) => $comment->moderation_type !== null && match ($comment->moderation_type) {
-                ModerationTypeEnum::Remove, ModerationTypeEnum::Replace, ModerationTypeEnum::Wrap, ModerationTypeEnum::Restore => true,
-                default => false,
-            },
-        );
-
-        // If the last appearance-modifying comment is a Restore, return null.
-        if ($appearanceComment && $appearanceComment->moderation_type === ModerationTypeEnum::Restore) {
-            return null;
-        }
-
-        return $appearanceComment;
+        return $this->findLastAppearanceComment($this->childComments);
     }
 
     /**
@@ -69,19 +58,7 @@ trait CommentComponentTrait
     #[Computed]
     public function blurComment(): ?Comment
     {
-        $blurComment = $this->childComments?->last(
-            fn($comment) => $comment->moderation_type !== null && match ($comment->moderation_type) {
-                ModerationTypeEnum::Blur, ModerationTypeEnum::Remove, ModerationTypeEnum::Replace, ModerationTypeEnum::Restore => true,
-                default => false,
-            },
-        );
-
-        // If the last blur-modifying comment is not a Blur, return null.
-        if ($blurComment && $blurComment->moderation_type !== ModerationTypeEnum::Blur) {
-            return null;
-        }
-
-        return $blurComment;
+        return $this->findLastBlurComment($this->childComments);
     }
 
     #[Computed]
@@ -148,6 +125,11 @@ trait CommentComponentTrait
         } else {
             $this->startModerating();
         }
+    }
+
+    public function resetBlur(): void
+    {
+        $this->dispatch(LivewireEventEnum::BlurReset->value, id: $this->commentId);
     }
 
     public function requestStateChange(CommentStateEnum $state): void

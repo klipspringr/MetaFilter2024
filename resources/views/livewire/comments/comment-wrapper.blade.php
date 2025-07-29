@@ -16,6 +16,14 @@
                     'comment' => $moderatorComment,
                 ])
             </div>
+
+            @moderator
+                <div class="button-group">
+                    @include('livewire.comments.partials.toggle-moderating-button', [
+                        'commentId' => $comment->id,
+                    ])
+                </div>
+            @endmoderator
         </footer>
         
         <footer class="comment-controls">

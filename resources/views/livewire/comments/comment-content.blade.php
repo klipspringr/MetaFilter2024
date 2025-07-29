@@ -12,26 +12,38 @@
             ])
         </div>
 
-        @auth
-            <livewire:bookmarks.bookmark-component
-                wire:key="bookmark-component-{{ $comment->id }}"
-                :model="$comment"
-            />
+        <div class="button-group">
+            @auth
+                <livewire:bookmarks.bookmark-component
+                    wire:key="bookmark-component-{{ $comment->id }}"
+                    :model="$comment"
+                />
 
-            <livewire:favorites.favorite-component
-                wire:key="favorite-component-{{ $comment->id }}"
-                :model="$comment"
-            />
+                <livewire:favorites.favorite-component
+                    wire:key="favorite-component-{{ $comment->id }}"
+                    :model="$comment"
+                />
+            @endauth
 
-            @if ($comment->user_id === auth()->id())
-                @include('livewire.comments.partials.toggle-editing-button')
+            @include('livewire.comments.partials.toggle-flagging-button')
+
+            @if ($this->isInitiallyBlurred)
+                @include('livewire.comments.partials.toggle-blur-button')
             @endif
+        </div>
 
-            @include('livewire.comments.partials.toggle-replying-button')
+        @auth
+            <div class="button-group">
+                @if ($comment->user_id === auth()->id())
+                    @include('livewire.comments.partials.toggle-editing-button')
+                @endif
 
-            @include('livewire.comments.partials.toggle-moderating-button')
+                @include('livewire.comments.partials.toggle-replying-button')
+
+                @include('livewire.comments.partials.toggle-moderating-button', [
+                    'commentId' => $comment->id,
+                ])
+            </div>
         @endauth
-
-        @include('livewire.comments.partials.toggle-flagging-button')
     </footer>
 </div>

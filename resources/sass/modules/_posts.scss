@@ -2,6 +2,9 @@
     position: relative;
     padding: 0.75rem;
     border-radius: 0.25rem;
+}
+
+section.posts>article.post {
     margin-bottom: 2rem;
 }
 
@@ -9,7 +12,6 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
-    margin-bottom: 2rem;
 }
 
 .comment {
@@ -17,18 +19,23 @@
     border-radius: 0.25rem;
 }
 
+.comment>.comments {
+    padding: 1rem;
+    gap: 1rem;
+}
+
 .comment.moderator-removed {
     display: none;
 }
 
-.comment>.moderator-removed,
-.comment>.moderator-replaced,
 .comment>.moderator-hidden>summary,
 .comment .comment-container {
     padding: 0.75rem;
     border-radius: 0.25rem;
 }
 
+.comments>.moderator-message,
+.comment>.moderator-message,
 .comment .blur-container {
     border-radius: 0.25rem;
 }
@@ -38,6 +45,17 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
+}
+
+.comment-footer .button-group {
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+}
+
+.comment-footer .button.footer-button {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
 }
 
 .comment-metadata {
@@ -61,6 +79,40 @@
 
 .moderator-message.moderator-removed {
     border: 1px solid var(--is-danger);
+}
+
+div.moderation-action {
+    display: flex;
+    flex-direction: row;
+}
+
+div.moderation-action>aside.moderation-action {
+    flex: 0 0 auto;
+    align-self: stretch;
+    padding: 0.25rem;
+    border-top-left-radius: calc(0.25rem - 1px);
+    border-bottom-left-radius: calc(0.25rem - 1px);
+    background-color: light-dark(var(--base-color), var(--yellow-green));
+    color: light-dark(var(--very-light-gray), var(--base-color));
+    writing-mode: sideways-lr;
+    text-orientation: mixed;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: var(--font-size-minus-1);
+}
+
+
+div.moderation-action>div.comment-container {
+    flex: 1 1 auto;
+}
+
+div.moderation-action.moderator-removed>aside.moderation-action {
+    background-color: var(--is-danger);
+    color: var(--white);
+}
+
+form.comment-form small.posting-as {
+    margin: 0 0 1rem 0;
 }
 
 details.moderator-hidden {

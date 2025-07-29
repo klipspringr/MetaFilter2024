@@ -7,6 +7,7 @@ namespace App\Livewire\Comments;
 use App\Enums\LivewireEventEnum;
 use App\Repositories\CommentRepositoryInterface;
 use App\Traits\AuthStatusTrait;
+use App\Traits\ModeratorActionsTrait;
 use App\Traits\SubsiteTrait;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -18,6 +19,7 @@ use Livewire\Component;
 final class CommentListComponent extends Component
 {
     use AuthStatusTrait;
+    use ModeratorActionsTrait;
     use SubsiteTrait;
 
     #[Locked]
@@ -50,6 +52,7 @@ final class CommentListComponent extends Component
     {
         return view('livewire.comments.comment-list-component', [
             'comments' => $this->comments,
+            'isModerator' => $this->isModerator(),
         ]);
     }
 
@@ -58,7 +61,7 @@ final class CommentListComponent extends Component
         LivewireEventEnum::CommentDeleted->value,
         LivewireEventEnum::CommentUpdated->value,
     ])]
-    public function getComments(): void
+    public function refreshComments(): void
     {
         unset($this->comments);
     }

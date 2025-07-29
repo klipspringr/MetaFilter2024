@@ -1,3 +1,8 @@
+@php
+use App\Enums\ModerationTypeEnum;
+use App\Models\Comment;
+@endphp
+
 <section class="comments">
     <h2 class="sr-only">
         {{ trans('Comments') }}
@@ -14,19 +19,22 @@
     @forelse ($rootComments as $comment)
         @php
             $childComments = $commentsByParentId->get($comment->id);
+            $appearanceComment = $this->findLastAppearanceComment($childComments);
         @endphp
 
-        <livewire:comments.comment-component
-            :key="$comment->id"
-            :comment-id="$comment->id"
-            :comment="$comment"
-            :child-comments="$childComments"
-        />
+        @if ($appearanceComment?->moderation_type !== ModerationTypeEnum::Remove || $isModerator)
+            <livewire:comments.comment-component
+                :key="$comment->id"
+                :comment-id="$comment->id"
+                :comment="$comment"
+                :child-comments="$childComments"
+            />
+        @endif
     @empty
         @include('notifications.none-listed', [
             'records' => $recordsText,
         ])
     @endforelse
 
-    <!-- div wire:poll.5s="getComments"></div -->
+    <!-- div wire:poll.30s="refreshComments"></div -->
 </section>

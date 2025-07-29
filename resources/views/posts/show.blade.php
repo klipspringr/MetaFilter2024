@@ -47,22 +47,22 @@
         ])
     </article>
 
-    <section class="comments" id="comments">
-        <livewire:comments.comment-list-component
-            wire:key="{{ $post->id }}"
-            :post-id="$post->id"
-        />
-    </section>
+    <livewire:comments.comment-list-component
+        wire:key="{{ $post->id }}"
+        :post-id="$post->id"
+    />
 
     @if ($post->is_archived === false)
         @auth
-            <h2>
-                {{ trans('Add a comment') }}
-            </h2>
+            <section class="add-comment">
+                <h2>
+                    {{ trans('Add a comment') }}
+                </h2>
 
-            <livewire:comments.comment-form-component
-                :post-id="$post->id"
-            />
+                <livewire:comments.comment-form-component
+                    :post-id="$post->id"
+                />
+            </section>
         @endauth
     @endif
 

@@ -68,6 +68,12 @@ body {
     position: relative;
 }
 
+.main-contents {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
 .main-contents>section.posts>* {
     padding-inline: 0.75rem;
 }
