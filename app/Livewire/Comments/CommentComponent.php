@@ -7,8 +7,8 @@ namespace App\Livewire\Comments;
 use App\Enums\CommentStateEnum;
 use App\Enums\LivewireEventEnum;
 use App\Enums\ModerationTypeEnum;
-use App\Enums\RoleNameEnum;
 use App\Models\Comment;
+use App\Traits\AuthStatusTrait;
 use App\Traits\CommentComponentTrait;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
@@ -17,6 +17,7 @@ use Livewire\Component;
 
 final class CommentComponent extends Component
 {
+    use AuthStatusTrait;
     use CommentComponentTrait;
 
     // State
@@ -28,7 +29,9 @@ final class CommentComponent extends Component
         // and the moderator comments collection.
         $this->commentId = $commentId;
         $this->comment = $comment ?? Comment::find($commentId);
-        $this->childComments = $childComments;
+        if ($childComments) {
+            $this->childComments = $childComments;
+        }
 
         // Decide whether to blur the component initially.
         $this->isBlurred = $this->isInitiallyBlurred;
@@ -38,19 +41,23 @@ final class CommentComponent extends Component
     {
         $moderationType = $this->appearanceComment?->moderation_type ?? null;
 
+        $hasModeratorActions = $this->filterModeratorActions($this->childComments, $this->state === CommentStateEnum::Moderating)->isNotEmpty();
+
         // If there are no decorations to apply, just render the basic comment component.
         return view('livewire.comments.comment-component', [
             'comment' => $this->comment,
             'childComments' => $this->childComments,
             'moderationType' => $moderationType,
             'isInitiallyBlurred' => $this->isInitiallyBlurred,
-            'isRemoved' => $moderationType === ModerationTypeEnum::Remove && !auth()->user()?->hasRole(RoleNameEnum::MODERATOR->value),
+            'isRemoved' => $moderationType === ModerationTypeEnum::Remove && !$this->isModerator(),
+            'appearanceComment' => $this->appearanceComment,
             'appearanceCommentId' => $this->appearanceComment?->id,
             'blurCommentId' => $this->blurComment?->id,
             'isEditing' => $this->state === CommentStateEnum::Editing,
             'isFlagging' => $this->state === CommentStateEnum::Flagging,
             'isReplying' => $this->state === CommentStateEnum::Replying,
             'isModerating' => $this->state === CommentStateEnum::Moderating,
+            'hasModeratorActions' => $hasModeratorActions,
         ]);
     }
 

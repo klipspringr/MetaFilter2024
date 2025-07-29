@@ -1,8 +1,8 @@
 @moderator
 <button
     class="button footer-button"
-    wire:click.prevent="toggleModerating()"
-    aria-controls="comment-moderation-form-{{ $comment->id }}"
+    wire:click.stop="toggleModerating()"
+    aria-controls="comment-moderation-form-{{ $commentId }}"
     aria-expanded="{{ json_encode($isModerating) }}">
     <x-icons.icon-component filename="stoplights-fill" />
     {{ trans('Moderate') }}

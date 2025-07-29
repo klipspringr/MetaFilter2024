@@ -7,6 +7,7 @@
             :comment="$comment"
             :child-comments="$childComments"
             :$state
+            @blur-reset="isBlurred = true"
         />
     </div>
     <div class="blur-overlay" x-show="isBlurred" @click="isBlurred = false">
@@ -15,11 +16,3 @@
         @endif
     </div>
 </div>
-
-@script
-<script>
-    $js('toggleBlurred', () => {
-        $wire.isBlurred = !$wire.isBlurred;
-    });
-</script>
-@endscript

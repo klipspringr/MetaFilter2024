@@ -1,4 +1,5 @@
 <form
+    class="comment-form"
     wire:submit.prevent="submit"
     x-data="{
         isBodyEditable: {{ json_encode($this->isBodyEditable) }},

@@ -15,7 +15,7 @@ trait AuthStatusTrait
 
     public function isModerator(): bool
     {
-        return auth()->user()->hasRole(RoleNameEnum::MODERATOR->value);
+        return auth()->user()?->hasRole(RoleNameEnum::MODERATOR->value) ?? false;
     }
 
     public function loggedIn(): bool

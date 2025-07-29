@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Comments;
 
+use App\Enums\CommentStateEnum;
 use App\Traits\CommentComponentTrait;
 use App\Traits\CommentComponentStateTrait;
 use Illuminate\Contracts\View\View;
@@ -24,6 +25,7 @@ final class CommentWrapper extends Component
             'childComments' => $this->childComments,
             'moderatorComment' => $this->appearanceComment,
             'isInitiallyBlurred' => $this->isInitiallyBlurred,
+            'isModerating' => $this->state === CommentStateEnum::Moderating,
         ]);
     }
 }
