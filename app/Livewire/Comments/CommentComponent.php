@@ -41,7 +41,7 @@ final class CommentComponent extends Component
     {
         $moderationType = $this->appearanceComment?->moderation_type ?? null;
 
-        $hasModeratorActions = $this->filterModeratorActions($this->childComments, $this->state === CommentStateEnum::Moderating)->isNotEmpty();
+        $hasModeratorActions = !empty($this->childComments) && $this->filterModeratorActions($this->childComments, $this->state === CommentStateEnum::Moderating)->isNotEmpty();
 
         // If there are no decorations to apply, just render the basic comment component.
         return view('livewire.comments.comment-component', [
