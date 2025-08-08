@@ -92,7 +92,8 @@ use App\Enums\ModerationTypeEnum;
     @if ($isReplying === true)
         <livewire:comments.comment-form-component
             wire:key="reply-to-comment-{{ $commentId }}"
-            :comment="$comment"
+            :post-id="$comment->post_id"
+            :parent-id="$commentId"
             is-replying="true"
             @comment-updated="closeForm()"
             @comment-stored="closeForm()"

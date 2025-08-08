@@ -21,16 +21,16 @@ final class CommentFormComponent extends Component
 
     // Props
     #[Locked]
-    public int $postId;
+    public int $postId = 0;
 
     #[Locked]
-    public ?int $commentId;
+    public ?int $commentId = null;
 
     #[Locked]
-    public ?int $parentId;
+    public ?int $parentId = null;
 
     #[Locked]
-    public string $idSuffix;
+    public string $idSuffix = '';
 
     // Form data
     public string $body = '';
@@ -38,24 +38,18 @@ final class CommentFormComponent extends Component
     public string $message = '';
 
     // State
-    public bool $isEditing;
-    public bool $isReplying;
-    public bool $isModerating;
+    public bool $isEditing = false;
+    public bool $isReplying = false;
+    public bool $isModerating = false;
 
     // Data not persisted in the client-side snapshot
     protected ?Comment $comment;
 
     #[Computed]
-    public function isAdding(): bool
-    {
-        return !$this->isEditing && !$this->isReplying && !$this->isModerating;
-    }
-
-    #[Computed]
     public function isBodyEditable(): bool
     {
-        return $this->isAdding || $this->isEditing ||
-            ($this->isModerating && $this->moderationType === ModerationTypeEnum::Edit);
+        // The body is editable if not moderating, or if the moderator is editing the original comment.
+        return !$this->isModerating || $this->moderationType === ModerationTypeEnum::Edit;
     }
 
     #[Computed]
@@ -103,15 +97,11 @@ final class CommentFormComponent extends Component
 
     public function render(): View
     {
-        $isAdding = !$this->isEditing && !$this->isReplying && !$this->isModerating;
-        $isBodyEditable = $isAdding || $this->isEditing ||
-            ($this->isModerating && $this->moderationType === ModerationTypeEnum::Edit);
         $data = [
             'bodyLabel' => trans('Comment'),
             'messageLabel' => trans('Moderation message'),
             'buttonText' => trans('Add Comment'),
-            'isAdding' => $isAdding,
-            'isBodyEditable' => $isBodyEditable,
+            'isBodyEditable' => $this->isBodyEditable,
             'bodyEditorId' => $this->bodyEditorId,
             'messageEditorId' => $this->messageEditorId,
         ];
