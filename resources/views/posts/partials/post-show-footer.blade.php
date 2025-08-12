@@ -15,7 +15,7 @@
 
     <span>
         <x-icons.icon-component filename="chat" />
-        {{ $commentsCount > 0 ?: 0 }}
+        {{ $commentsCount }}
     </span>
 
     @if (isset($favoritesCount) && $favoritesCount > 0)
