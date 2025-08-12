@@ -146,7 +146,7 @@ final class Post extends BaseModel implements CanPresent, HasMedia
     public function commentsCount(): int
     {
         // Only count comments by regular users, not moderator actions
-        return $this->hasMany(Comment::class)->whereNull("moderation_type")->count();
+        return $this->hasMany(Comment::class)->whereNull('moderation_type')->count();
     }
 
     public function bookmarkCount(): int
