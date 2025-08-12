@@ -42,7 +42,7 @@
 
         @include('posts.partials.post-show-footer', [
             'post' => $post,
-            'commentsCount' => $post->comments()->count(),
+            'commentsCount' => $post->commentsCount(),
             'favoritesCount' => $post->favoriteCount(),
         ])
     </article>

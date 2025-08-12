@@ -9,6 +9,6 @@
         href="{{ $post->present()->url }}#comments"
         title="{{ trans('Comments') }}">
         <x-icons.icon-component filename="chat" />
-        {{ $post->comments()->count() > 0 ?: 0 }}
+        {{ $post->commentsCount() }}
     </a>
 </footer>

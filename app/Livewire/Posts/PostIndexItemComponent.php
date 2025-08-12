@@ -21,7 +21,7 @@ final class PostIndexItemComponent extends Component
     {
         $this->authorizedUserId = $this->getAuthorizedUserId();
         $this->post = $post;
-        $this->commentCount = $post->comments()->count();
+        $this->commentCount = $post->commentsCount();
     }
 
     public function render(): View
