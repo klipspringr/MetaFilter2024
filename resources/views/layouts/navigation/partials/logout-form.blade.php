@@ -1,5 +1,5 @@
 <form
-    action="/logout"
+    action="{{ route('logout') }}"
     class="logout-form"
     method="POST"
 >
